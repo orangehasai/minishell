@@ -14,13 +14,26 @@ jobs:
         with:
           submodules: true
 
+      - name: Check if Makefile exists
+        id: check
+        run: |
+          if [ -f Makefile ] && ls src/*.c src/**/*.c 2>/dev/null | head -1 > /dev/null; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "ソースコードがまだないのでスキップ"
+          fi
+
       - name: Install readline
+        if: steps.check.outputs.ready == 'true'
         run: sudo apt-get update && sudo apt-get install -y libreadline-dev
 
       - name: Build
+        if: steps.check.outputs.ready == 'true'
         run: make
 
       - name: Build clean check (no relink)
+        if: steps.check.outputs.ready == 'true'
         run: |
           make
           make 2>&1 | tee build_output.txt
@@ -30,22 +43,27 @@ jobs:
           fi
           echo "No unnecessary relink"
 
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: minishell
-          path: minishell
-
   norminette:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install norminette
+      - name: Check if source files exist
+        id: check
         run: |
-          pip install norminette --break-system-packages
+          if find src includes -name '*.c' -o -name '*.h' 2>/dev/null | head -1 | grep -q .; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo ".c/.h ファイルがまだないのでスキップ"
+          fi
+
+      - name: Install norminette
+        if: steps.check.outputs.ready == 'true'
+        run: pip install norminette --break-system-packages
 
       - name: Run norminette
+        if: steps.check.outputs.ready == 'true'
         run: |
           echo "::group::norminette output"
           norminette src/ includes/ 2>&1 | tee norm_output.txt
@@ -66,15 +84,28 @@ jobs:
         with:
           submodules: true
 
+      - name: Check if binary can be built
+        id: check
+        run: |
+          if [ -f Makefile ] && ls src/*.c src/**/*.c 2>/dev/null | head -1 > /dev/null; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "ソースコードがまだないのでスキップ"
+          fi
+
       - name: Install dependencies
+        if: steps.check.outputs.ready == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libreadline-dev valgrind
 
       - name: Build
+        if: steps.check.outputs.ready == 'true'
         run: make
 
       - name: Run valgrind
+        if: steps.check.outputs.ready == 'true'
         run: |
           echo 'echo hello
           ls
@@ -91,11 +122,8 @@ jobs:
             --suppressions=readline.supp \
             ./minishell 2>&1 | tee valgrind_output.txt
 
-          # readline 由来のリークを除外して判定
-          # "definitely lost" が自前コードから出ていたら失敗
           if grep -q "definitely lost: [^0]" valgrind_output.txt; then
-            # readline/add_history 由来かチェック
-            REAL_LEAKS=$(grep -A 20 "definitely lost" valgrind_output.txt | grep -v -e "readline" -e "add_history" -e "rl_" | grep -c "minishell\|src/")
+            REAL_LEAKS=$(grep -A 20 "definitely lost" valgrind_output.txt | grep -v -e "readline" -e "add_history" -e "rl_" | grep -c "minishell\|src/") || true
             if [ "$REAL_LEAKS" -gt 0 ]; then
               echo "Memory leaks detected in minishell code"
               exit 1
@@ -104,7 +132,7 @@ jobs:
           echo "No memory leaks (readline leaks excluded)"
 
       - name: Upload valgrind report
-        if: always()
+        if: always() && steps.check.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: valgrind-report
