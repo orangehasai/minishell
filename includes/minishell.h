@@ -6,7 +6,7 @@
 /*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 16:57:15 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/03/21 23:12:37 by takenakatak      ###   ########.fr       */
+/*   Updated: 2026/03/21 23:13:44 by takenakatak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-extern int			g_signal;
+extern volatile sig_atomic_t	g_signal;
 
 typedef enum e_token_type
 {
@@ -37,40 +37,40 @@ typedef enum e_token_type
 	TK_HEREDOC,
 	TK_APPEND,
 	TK_EOF,
-}					t_token_type;
+}								t_token_type;
 
 typedef struct s_token
 {
-	t_token_type	type;
-	char			*value;
-	struct s_token	*next;
-}					t_token;
+	t_token_type				type;
+	char						*value;
+	struct s_token				*next;
+}								t_token;
 
 typedef struct s_redir
 {
-	t_token_type	type;
-	char			*file;
-	struct s_redir	*next;
-}					t_redir;
+	t_token_type				type;
+	char						*file;
+	struct s_redir				*next;
+}								t_redir;
 
 typedef struct s_cmd
 {
-	char			**argv;
-	t_redir			*redirs;
-	struct s_cmd	*next;
-}					t_cmd;
+	char						**argv;
+	t_redir						*redirs;
+	struct s_cmd				*next;
+}								t_cmd;
 
 typedef struct s_env
 {
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}					t_env;
+	char						*key;
+	char						*value;
+	struct s_env				*next;
+}								t_env;
 
 typedef struct s_shell
 {
-	t_env			*env;
-	int				last_status;
-}					t_shell;
+	t_env						*env;
+	int							last_status;
+}								t_shell;
 
 #endif
