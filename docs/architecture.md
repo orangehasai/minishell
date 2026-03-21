@@ -97,7 +97,6 @@ typedef struct s_shell
 {
     t_env   *env;           // 環境変数 linked list
     int     last_status;    // 直前コマンドの終了ステータス（$? 用）
-    char    *line;          // readline() で取得した生の入力行
 }   t_shell;
 ```
 
