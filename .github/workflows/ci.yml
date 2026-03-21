@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install readline
+        run: sudo apt-get update && sudo apt-get install -y libreadline-dev
+
+      - name: Build
+        run: make
+
+      - name: Build clean check (no relink)
+        run: |
+          make
+          make 2>&1 | tee build_output.txt
+          if grep -q "cc " build_output.txt; then
+            echo "::error::Makefile relinks unnecessarily"
+            exit 1
+          fi
+          echo "No unnecessary relink"
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: minishell
+          path: minishell
+
+  norminette:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install norminette
+        run: |
+          pip install norminette --break-system-packages
+
+      - name: Run norminette
+        run: |
+          echo "::group::norminette output"
+          norminette src/ includes/ 2>&1 | tee norm_output.txt
+          echo "::endgroup::"
+          if grep -q "Error" norm_output.txt; then
+            echo ""
+            echo "Norm violations found:"
+            grep "Error" norm_output.txt
+            exit 1
+          fi
+          echo "Norminette passed"
+
+  valgrind:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreadline-dev valgrind
+
+      - name: Build
+        run: make
+
+      - name: Run valgrind
+        run: |
+          echo 'echo hello
+          ls
+          pwd
+          export FOO=bar
+          env | grep FOO
+          unset FOO
+          echo $?
+          exit' | valgrind \
+            --leak-check=full \
+            --show-leak-kinds=all \
+            --track-origins=yes \
+            --error-exitcode=42 \
+            --suppressions=readline.supp \
+            ./minishell 2>&1 | tee valgrind_output.txt
+
+          # readline 由来のリークを除外して判定
+          # "definitely lost" が自前コードから出ていたら失敗
+          if grep -q "definitely lost: [^0]" valgrind_output.txt; then
+            # readline/add_history 由来かチェック
+            REAL_LEAKS=$(grep -A 20 "definitely lost" valgrind_output.txt | grep -v -e "readline" -e "add_history" -e "rl_" | grep -c "minishell\|src/")
+            if [ "$REAL_LEAKS" -gt 0 ]; then
+              echo "Memory leaks detected in minishell code"
+              exit 1
+            fi
+          fi
+          echo "No memory leaks (readline leaks excluded)"
+
+      - name: Upload valgrind report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valgrind-report
+          path: valgrind_output.txt

@@ -1,0 +1,62 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            このリポジトリは 42 の Minishell 課題（C言語）です。
+            CLAUDE.md を読んでプロジェクトのルールを理解してください。
+
+            以下の観点で PR をレビューしてください:
+
+            ## 42 Norm v4.1（最重要 — 違反すると 0 点）
+            - 1関数 25行以内（波括弧の行は除く）
+            - 1ファイル 5関数以内
+            - 1行 80文字以内（タブは4文字分）
+            - 変数宣言は関数冒頭のみ、1行1変数、最大5変数
+            - 宣言と初期化の同時禁止（static/const除く）
+            - for / do...while / switch / case / goto / 三項演算子 / VLA 禁止
+            - 引数は最大4つ、引数なしは void 明示
+            - return の戻り値は丸括弧: return (val);
+            - ポインタの * は変数名に隣接: char *str
+            - 関数内コメント禁止
+            - .c 内で構造体宣言禁止（.h のみ）
+
+            ## メモリ安全性
+            - malloc/ft_calloc の NULL チェック
+            - free 漏れ（特に ft_strjoin/ft_split の中間値）
+            - エラーパスでの解放漏れ
+
+            ## fd リーク
+            - open/pipe した fd の close 漏れ
+            - dup2 後の元 fd の close 漏れ
+
+            ## ロジック
+            - NULL ポインタ参照の可能性
+            - 終了ステータスの正しさ（127, 126, 2）
+            - bash との挙動の一致
+
+            日本語でレビューコメントを書いてください。
