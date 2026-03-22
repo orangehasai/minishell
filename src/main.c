@@ -6,13 +6,13 @@
 /*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 16:56:58 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/03/21 19:51:20 by takenakatak      ###   ########.fr       */
+/*   Updated: 2026/03/21 23:14:07 by takenakatak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_signal;
+volatile sig_atomic_t	g_signal;
 
 int	main(void)
 {
