@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
+/*   By: skeita <skeita@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/21 16:57:12 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/03/21 16:57:13 by takenakatak      ###   ########.fr       */
+/*   Created: 2025/04/05 16:11:27 by skeita            #+#    #+#             */
+/*   Updated: 2025/04/05 16:11:28 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
