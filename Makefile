@@ -7,7 +7,13 @@ INCLUDES	= -I includes -I libft
 LIBFT_DIR	= libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
-SRCS		= src/main.c
+SRCS		= src/main.c \
+			src/lexer/lexer.c \
+			src/lexer/lexer_debug.c \
+			src/lexer/lexer_operator.c \
+			src/lexer/lexer_utils.c \
+			src/lexer/lexer_word.c \
+			src/lexer/token_utils.c
 
 OBJS		= $(SRCS:.c=.o)
 
