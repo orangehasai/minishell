@@ -31,5 +31,7 @@ void	free_tokens(t_token *tokens);
 int		is_whitespace(char c);
 int		is_operator(char c);
 void	skip_whitespace(char *line, size_t *i);
+void	debug_print_tokens(t_token *tokens);
+char	*token_type_to_str(t_token_type type);
 
 #endif
