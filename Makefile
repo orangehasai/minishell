@@ -13,7 +13,10 @@ SRCS		= src/main.c \
 			src/lexer/lexer_operator.c \
 			src/lexer/lexer_utils.c \
 			src/lexer/lexer_word.c \
-			src/lexer/token_utils.c
+			src/lexer/token_utils.c \
+			src/parser/parser.c \
+			src/parser/parse_command.c \
+			src/parser/parser_utils.c
 
 OBJS		= $(SRCS:.c=.o)
 

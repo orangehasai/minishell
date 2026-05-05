@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: skeita <skeita@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,15 +10,32 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
+#include "parser.h"
 
-# include "minishell.h"
+void	free_cmds(t_cmd *cmd)
+{
+	t_cmd	*next;
 
-t_cmd	*parser(t_token *tokens);
-t_cmd	*parse_command(t_token **tokens);
-void	append_cmd(t_cmd **head, t_cmd **tail, t_cmd *new_cmd);
-void	free_cmd(t_cmd *cmd);
-void	free_cmds(t_cmd *cmd);
+	while (cmd != NULL)
+	{
+		next = cmd->next;
+		free_cmd(cmd);
+		cmd = next;
+	}
+}
 
-#endif
+void	free_cmd(t_cmd *cmd)
+{
+	size_t	i;
+
+	if (!cmd)
+		return ;
+	i = 0;
+	while (cmd->argv && cmd->argv[i])
+	{
+		free(cmd->argv[i]);
+		i++;
+	}
+	free(cmd->argv);
+	free(cmd);
+}
