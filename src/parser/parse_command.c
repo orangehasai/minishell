@@ -6,7 +6,7 @@
 /*   By: skeita <skeita@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:08:00 by skeita            #+#    #+#             */
-/*   Updated: 2026/05/05 21:08:00 by skeita           ###   ########.fr       */
+/*   Updated: 2026/05/06 13:33:00 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,32 @@ static t_cmd	*new_cmd(void)
 	return (cmd);
 }
 
+static int	parse_token_in_cmd(t_cmd *cmd, t_token **tokens)
+{
+	t_redir	*redir;
+	char	**new_argv;
+
+	if ((*tokens)->type == TK_REDIR_IN || (*tokens)->type == TK_REDIR_OUT
+		|| (*tokens)->type == TK_HEREDOC || (*tokens)->type == TK_APPEND)
+	{
+		redir = parse_redir(tokens);
+		if (!redir)
+			return (1);
+		append_redir(cmd, redir);
+	}
+	else if ((*tokens)->type == TK_WORD)
+	{
+		new_argv = add_argv(cmd->argv, (*tokens)->value);
+		if (!new_argv)
+			return (1);
+		cmd->argv = new_argv;
+	}
+	return (0);
+}
+
 t_cmd	*parse_command(t_token **tokens)
 {
 	t_cmd	*cmd;
-	char	**new_argv;
 
 	cmd = new_cmd();
 	if (!cmd)
@@ -76,18 +98,16 @@ t_cmd	*parse_command(t_token **tokens)
 	{
 		if ((*tokens)->type == TK_EOF)
 			break ;
-		if ((*tokens)->type == TK_PIPE)
+		else if ((*tokens)->type == TK_PIPE)
 		{
 			*tokens = (*tokens)->next;
 			break ;
 		}
-		new_argv = add_argv(cmd->argv, (*tokens)->value);
-		if (!new_argv)
+		if (parse_token_in_cmd(cmd, tokens))
 		{
 			free_cmd(cmd);
 			return (NULL);
 		}
-		cmd->argv = new_argv;
 		*tokens = (*tokens)->next;
 	}
 	return (cmd);
