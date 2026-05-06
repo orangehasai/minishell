@@ -12,32 +12,6 @@
 
 #include "parser.h"
 
-static char	**add_argv(char **argv, char *value)
-{
-	char	**new_argv;
-	char	*dup;
-	size_t	argv_len;
-
-	dup = ft_strdup(value);
-	if (!dup)
-		return (NULL);
-	argv_len = 0;
-	while (argv && argv[argv_len])
-		argv_len++;
-	new_argv = malloc(sizeof(char *) * (argv_len + 2));
-	if (!new_argv)
-	{
-		free(dup);
-		return (NULL);
-	}
-	if (argv_len > 0)
-		ft_memcpy(new_argv, argv, sizeof(char *) * argv_len);
-	new_argv[argv_len] = dup;
-	new_argv[argv_len + 1] = NULL;
-	free(argv);
-	return (new_argv);
-}
-
 static t_cmd	*new_cmd(void)
 {
 	t_cmd	*cmd;
@@ -67,12 +41,28 @@ static t_parse_error	parse_token_in_cmd(t_cmd *cmd, t_token **tokens,
 	}
 	else if ((*tokens)->type == TK_WORD)
 	{
-		new_argv = add_argv(cmd->argv, (*tokens)->value);
+		new_argv = parser_add_argv(cmd->argv, (*tokens)->value);
 		if (!new_argv)
 			return (PARSE_ERR_INTERNAL);
 		cmd->argv = new_argv;
 	}
 	return (PARSE_OK);
+}
+
+static t_cmd	*handle_pipe_token(t_cmd *cmd, t_token **tokens,
+		t_parse_error *error)
+{
+	if (!(*tokens)->next || (*tokens)->next->type == TK_EOF)
+		*error = PARSE_ERR_PIPE_END;
+	else if ((*tokens)->next->type == TK_PIPE)
+		*error = PARSE_ERR_PIPE_CONSECUTIVE;
+	else
+	{
+		*tokens = (*tokens)->next;
+		return (cmd);
+	}
+	free_cmd(cmd);
+	return (NULL);
 }
 
 static t_cmd	*parse_command_loop(t_cmd *cmd, t_token **tokens,
@@ -85,10 +75,7 @@ static t_cmd	*parse_command_loop(t_cmd *cmd, t_token **tokens,
 		if ((*tokens)->type == TK_EOF)
 			break ;
 		else if ((*tokens)->type == TK_PIPE)
-		{
-			*tokens = (*tokens)->next;
-			break ;
-		}
+			return (handle_pipe_token(cmd, tokens, error));
 		token_error = parse_token_in_cmd(cmd, tokens, error);
 		if (token_error != PARSE_OK)
 		{

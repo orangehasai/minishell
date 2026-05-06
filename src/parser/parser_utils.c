@@ -14,6 +14,32 @@
 
 static void	free_redirs(t_cmd *cmd);
 
+char	**parser_add_argv(char **argv, char *value)
+{
+	char	**new_argv;
+	char	*dup;
+	size_t	argv_len;
+
+	dup = ft_strdup(value);
+	if (!dup)
+		return (NULL);
+	argv_len = 0;
+	while (argv && argv[argv_len])
+		argv_len++;
+	new_argv = malloc(sizeof(char *) * (argv_len + 2));
+	if (!new_argv)
+	{
+		free(dup);
+		return (NULL);
+	}
+	if (argv_len > 0)
+		ft_memcpy(new_argv, argv, sizeof(char *) * argv_len);
+	new_argv[argv_len] = dup;
+	new_argv[argv_len + 1] = NULL;
+	free(argv);
+	return (new_argv);
+}
+
 void	free_cmds(t_cmd *cmd)
 {
 	t_cmd	*next;
