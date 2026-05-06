@@ -6,47 +6,34 @@
 /*   By: skeita <skeita@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:08:00 by skeita            #+#    #+#             */
-/*   Updated: 2026/05/06 13:33:00 by skeita           ###   ########.fr       */
+/*   Updated: 2026/05/06 14:21:00 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
-
-static size_t	count_argv(char **argv)
-{
-	size_t	i;
-
-	i = 0;
-	while (argv && argv[i])
-		i++;
-	return (i);
-}
 
 static char	**add_argv(char **argv, char *value)
 {
 	char	**new_argv;
 	char	*dup;
 	size_t	argv_len;
-	size_t	i;
 
 	dup = ft_strdup(value);
 	if (!dup)
 		return (NULL);
-	argv_len = count_argv(argv);
+	argv_len = 0;
+	while (argv && argv[argv_len])
+		argv_len++;
 	new_argv = malloc(sizeof(char *) * (argv_len + 2));
 	if (!new_argv)
 	{
 		free(dup);
 		return (NULL);
 	}
-	i = 0;
-	while (i < argv_len)
-	{
-		new_argv[i] = argv[i];
-		i++;
-	}
-	new_argv[i] = dup;
-	new_argv[i + 1] = NULL;
+	if (argv_len > 0)
+		ft_memcpy(new_argv, argv, sizeof(char *) * argv_len);
+	new_argv[argv_len] = dup;
+	new_argv[argv_len + 1] = NULL;
 	free(argv);
 	return (new_argv);
 }
@@ -64,7 +51,8 @@ static t_cmd	*new_cmd(void)
 	return (cmd);
 }
 
-static int	parse_token_in_cmd(t_cmd *cmd, t_token **tokens)
+static t_parse_error	parse_token_in_cmd(t_cmd *cmd, t_token **tokens,
+		t_parse_error *error)
 {
 	t_redir	*redir;
 	char	**new_argv;
@@ -72,28 +60,26 @@ static int	parse_token_in_cmd(t_cmd *cmd, t_token **tokens)
 	if ((*tokens)->type == TK_REDIR_IN || (*tokens)->type == TK_REDIR_OUT
 		|| (*tokens)->type == TK_HEREDOC || (*tokens)->type == TK_APPEND)
 	{
-		redir = parse_redir(tokens);
+		redir = parse_redir(tokens, error);
 		if (!redir)
-			return (1);
+			return (*error);
 		append_redir(cmd, redir);
 	}
 	else if ((*tokens)->type == TK_WORD)
 	{
 		new_argv = add_argv(cmd->argv, (*tokens)->value);
 		if (!new_argv)
-			return (1);
+			return (PARSE_ERR_INTERNAL);
 		cmd->argv = new_argv;
 	}
-	return (0);
+	return (PARSE_OK);
 }
 
-t_cmd	*parse_command(t_token **tokens)
+static t_cmd	*parse_command_loop(t_cmd *cmd, t_token **tokens,
+		t_parse_error *error)
 {
-	t_cmd	*cmd;
+	t_parse_error	token_error;
 
-	cmd = new_cmd();
-	if (!cmd)
-		return (NULL);
 	while (*tokens != NULL)
 	{
 		if ((*tokens)->type == TK_EOF)
@@ -103,12 +89,31 @@ t_cmd	*parse_command(t_token **tokens)
 			*tokens = (*tokens)->next;
 			break ;
 		}
-		if (parse_token_in_cmd(cmd, tokens))
+		token_error = parse_token_in_cmd(cmd, tokens, error);
+		if (token_error != PARSE_OK)
 		{
 			free_cmd(cmd);
+			*error = token_error;
 			return (NULL);
 		}
 		*tokens = (*tokens)->next;
 	}
+	return (cmd);
+}
+
+t_cmd	*parse_command(t_token **tokens, t_parse_error *error)
+{
+	t_cmd	*cmd;
+
+	cmd = new_cmd();
+	if (!cmd)
+	{
+		*error = PARSE_ERR_INTERNAL;
+		return (NULL);
+	}
+	cmd = parse_command_loop(cmd, tokens, error);
+	if (!cmd)
+		return (NULL);
+	*error = PARSE_OK;
 	return (cmd);
 }
