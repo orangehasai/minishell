@@ -39,6 +39,7 @@ t_redir			*new_redir(t_token_type type);
 void			append_cmd(t_cmd **head, t_cmd **tail, t_cmd *new_cmd);
 void			append_redir(t_cmd *cmd, t_redir *redir);
 char			**parser_add_argv(char **argv, char *value);
+void			debug_print_cmds(t_cmd *cmds);
 t_parse_error	syntax_error(t_parse_error error, t_token *token);
 void			free_cmd(t_cmd *cmd);
 void			free_cmds(t_cmd *cmd);

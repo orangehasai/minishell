@@ -43,6 +43,7 @@ static void	process_line(char *line, t_shell *shell)
 		handle_parse_error(result, tokens, shell);
 		return ;
 	}
+	debug_print_cmds(result.cmds);
 	free_cmds(result.cmds);
 	free_tokens(tokens);
 }
