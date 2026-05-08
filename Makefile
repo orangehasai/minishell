@@ -10,7 +10,9 @@ TESTS_DIR	= tests
 
 SRCS		= src/main.c \
 		  src/env/env_init.c \
-		  src/env/env_ops.c
+		  src/env/env_ops.c \
+		  src/env/env_utils.c \
+		  src/env/env_export.c
 
 OBJS		= $(SRCS:.c=.o)
 
