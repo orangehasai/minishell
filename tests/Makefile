@@ -13,8 +13,11 @@ ENV_OBJS	= $(OBJ_DIR)/common/test_output.o \
 		  $(OBJ_DIR)/env/env_test_utils.o \
 		  $(OBJ_DIR)/env/env_test_case_init.o \
 		  $(OBJ_DIR)/env/env_test_case_ops.o \
+		  $(OBJ_DIR)/env/env_test_case_utils.o \
 		  $(OBJ_DIR)/src/env/env_init.o \
-		  $(OBJ_DIR)/src/env/env_ops.o
+		  $(OBJ_DIR)/src/env/env_ops.o \
+		  $(OBJ_DIR)/src/env/env_utils.o \
+		  $(OBJ_DIR)/src/env/env_export.o
 
 all: env_test
 

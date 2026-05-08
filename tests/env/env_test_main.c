@@ -6,7 +6,7 @@
 /*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/08 20:44:09 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/05/08 20:44:09 by takenakatak      ###   ########.fr       */
+/*   Updated: 2026/05/09 01:09:33 by takenakatak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,11 @@ int	main(void)
 	passed += test_env_set_null_value();
 	passed += test_env_unset();
 	passed += test_env_invalid_args();
-	printf("%d/6 tests passed\n", passed);
-	if (passed != 6)
+	passed += test_env_to_array();
+	passed += test_split_key_value();
+	passed += test_env_print_export();
+	printf("%d/9 tests passed\n", passed);
+	if (passed != 9)
 		return (1);
 	return (0);
 }
