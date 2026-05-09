@@ -9,8 +9,14 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 TESTS_DIR	= tests
 
 SRCS		= src/main.c \
-		  src/env/env_init.c \
-		  src/env/env_ops.c
+		  	src/env/env_init.c \
+		  	src/env/env_ops.c
+			src/lexer/lexer.c \
+			src/lexer/lexer_debug.c \
+			src/lexer/lexer_operator.c \
+			src/lexer/lexer_utils.c \
+			src/lexer/lexer_word.c \
+			src/lexer/token_utils.c
 
 OBJS		= $(SRCS:.c=.o)
 

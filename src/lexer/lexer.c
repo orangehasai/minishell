@@ -10,28 +10,58 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_H
-# define LEXER_H
+#include "lexer.h"
 
-# include "minishell.h"
-
-typedef enum e_lex_state
+static int	append_current_token(char *line, size_t *i, t_token **head,
+		t_token **tail)
 {
-	NORMAL,
-	SINGLE_QUOTE,
-	DOUBLE_QUOTE,
-}	t_lex_state;
+	t_token	*token;
 
-t_token	*lexer(char *line);
-t_token	*read_word(char *line, size_t *i);
-t_token	*read_operator(char *line, size_t *i);
-t_token	*new_token(t_token_type type, char *value);
-void	append_token(t_token **head, t_token **tail, t_token *new_tok);
-void	free_tokens(t_token *tokens);
-int		is_whitespace(char c);
-int		is_operator(char c);
-void	skip_whitespace(char *line, size_t *i);
-void	debug_print_tokens(t_token *tokens);
-char	*token_type_to_str(t_token_type type);
+	if (is_operator(line[*i]))
+		token = read_operator(line, i);
+	else
+		token = read_word(line, i);
+	if (!token)
+		return (0);
+	append_token(head, tail, token);
+	return (1);
+}
 
-#endif
+static int	append_eof_token(t_token **head, t_token **tail)
+{
+	t_token	*token;
+
+	token = new_token(TK_EOF, NULL);
+	if (!token)
+		return (0);
+	append_token(head, tail, token);
+	return (1);
+}
+
+t_token	*lexer(char *line)
+{
+	size_t	i;
+	t_token	*head;
+	t_token	*tail;
+
+	i = 0;
+	head = NULL;
+	tail = NULL;
+	while (line[i])
+	{
+		skip_whitespace(line, &i);
+		if (!line[i])
+			break ;
+		if (!append_current_token(line, &i, &head, &tail))
+		{
+			free_tokens(head);
+			return (NULL);
+		}
+	}
+	if (!append_eof_token(&head, &tail))
+	{
+		free_tokens(head);
+		return (NULL);
+	}
+	return (head);
+}
