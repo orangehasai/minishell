@@ -54,10 +54,12 @@ t_env	*env_init(char **envp)
 
 	env = NULL;
 	index = 0;
+	errno = 0;
 	while (envp && envp[index])
 	{
 		if (add_env_entry(&env, envp[index]))
 		{
+			errno = ENOMEM;
 			env_free(env);
 			return (NULL);
 		}
