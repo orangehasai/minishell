@@ -11,10 +11,34 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "lexer.h"
 
 volatile sig_atomic_t	g_signal;
 
 int	main(void)
 {
+	char	*line;
+	t_token	*tokens;
+
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break ;
+		if (!*line)
+		{
+			free(line);
+			continue ;
+		}
+		tokens = lexer(line);
+		if (!tokens)
+		{
+			free(line);
+			continue ;
+		}
+		debug_print_tokens(tokens);
+		free_tokens(tokens);
+		free(line);
+	}
 	return (0);
 }
