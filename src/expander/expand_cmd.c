@@ -12,11 +12,29 @@
 
 #include "expander.h"
 
+static int	replace_argv_value(char **argv_value, t_shell *shell)
+{
+	char	*expanded_argv;
+	char	*origin;
+	char	*removed_quote_argv;
+
+	expanded_argv = expand_str(*argv_value, shell, &origin);
+	if (!expanded_argv)
+		return (0);
+	removed_quote_argv = remove_quotes(expanded_argv, origin);
+	free(origin);
+	free(expanded_argv);
+	if (!removed_quote_argv)
+		return (0);
+	free(*argv_value);
+	*argv_value = removed_quote_argv;
+	return (1);
+}
+
 int	expander(t_cmd *cmds, t_shell *shell)
 {
 	t_cmd	*current_cmd;
 	size_t	argv_i;
-	char	*formatted_argv;
 
 	current_cmd = cmds;
 	while (current_cmd)
@@ -24,11 +42,8 @@ int	expander(t_cmd *cmds, t_shell *shell)
 		argv_i = 0;
 		while (current_cmd->argv && current_cmd->argv[argv_i])
 		{
-			formatted_argv = expand_str(current_cmd->argv[argv_i], shell);
-			if (!formatted_argv)
+			if (!replace_argv_value(&current_cmd->argv[argv_i], shell))
 				return (1);
-			free(current_cmd->argv[argv_i]);
-			current_cmd->argv[argv_i] = formatted_argv;
 			argv_i++;
 		}
 		current_cmd = current_cmd->next;

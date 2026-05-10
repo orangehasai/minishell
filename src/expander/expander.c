@@ -12,18 +12,33 @@
 
 #include "expander.h"
 
+static int	append_origin_n(char **origin, char flag, size_t n)
+{
+	while (n--)
+	{
+		if (!append_literal(origin, flag))
+			return (0);
+	}
+	return (1);
+}
+
 static int	process_expand_char(const char *input, size_t *i,
-		char **formatted_input, t_shell *shell)
+		t_expand_out *out)
 {
 	char	*expanded_input;
 	size_t	expanded_i;
 
 	expanded_i = *i;
-	expanded_input = expand_dollar(input, &expanded_i, shell);
+	expanded_input = expand_dollar(input, &expanded_i, out->shell);
 	if (!expanded_input)
 		return (0);
 	*i = expanded_i;
-	if (!append_expanded(formatted_input, expanded_input))
+	if (!append_expanded(out->formatted_input, expanded_input))
+	{
+		free(expanded_input);
+		return (0);
+	}
+	if (!append_origin_n(out->origin, '0', ft_strlen(expanded_input)))
 	{
 		free(expanded_input);
 		return (0);
@@ -32,37 +47,55 @@ static int	process_expand_char(const char *input, size_t *i,
 	return (1);
 }
 
-static int	process_literal_char(char **formatted_input, char c)
+static int	init_expand_str(char **formatted_input, char **origin,
+		t_expand_out *out, t_shell *shell)
 {
-	return (append_literal(formatted_input, c));
+	*origin = ft_strdup("");
+	if (!*origin)
+		return (0);
+	*formatted_input = ft_strdup("");
+	if (!*formatted_input)
+	{
+		free(*origin);
+		return (0);
+	}
+	out->origin = origin;
+	out->formatted_input = formatted_input;
+	out->shell = shell;
+	return (1);
 }
 
-static char	*expand_fail(char *formatted_input)
+static int	process_expand_step(const char *input, size_t *i, t_expand_out *out,
+		t_quote_state current_quote_state)
 {
-	free(formatted_input);
-	return (NULL);
+	if (input[*i] == '$' && current_quote_state != QUOTE_SINGLE)
+		return (process_expand_char(input, i, out));
+	if (!append_literal(out->formatted_input, input[*i])
+		|| !append_literal(out->origin, '1'))
+		return (0);
+	return (1);
 }
 
-char	*expand_str(const char *input, t_shell *shell)
+char	*expand_str(const char *input, t_shell *shell, char **origin)
 {
 	size_t			i;
 	char			*formatted_input;
 	t_quote_state	current_quote_state;
+	t_expand_out	out;
 
-	formatted_input = ft_strdup("");
-	if (!formatted_input)
+	if (!init_expand_str(&formatted_input, origin, &out, shell))
 		return (NULL);
 	current_quote_state = QUOTE_NONE;
 	i = 0;
 	while (input[i])
 	{
 		current_quote_state = update_quote_state(current_quote_state, input[i]);
-		if (input[i] == '$' && current_quote_state != QUOTE_SINGLE
-			&& !process_expand_char(input, &i, &formatted_input, shell))
-			return (expand_fail(formatted_input));
-		else if ((input[i] != '$' || current_quote_state == QUOTE_SINGLE)
-			&& !process_literal_char(&formatted_input, input[i]))
-			return (expand_fail(formatted_input));
+		if (!process_expand_step(input, &i, &out, current_quote_state))
+		{
+			free(formatted_input);
+			free(*origin);
+			return (NULL);
+		}
 		i++;
 	}
 	return (formatted_input);
