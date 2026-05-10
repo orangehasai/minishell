@@ -36,13 +36,17 @@ static void	process_line(char *line, t_shell *shell)
 
 	tokens = lexer(line);
 	if (!tokens)
+	{
+		shell->last_status = 2;
 		return ;
+	}
 	result = parser(tokens);
 	if (result.error != PARSE_OK)
 	{
 		handle_parse_error(result, tokens, shell);
 		return ;
 	}
+	shell->last_status = 0;
 	free_cmds(result.cmds);
 	free_tokens(tokens);
 }
@@ -66,5 +70,5 @@ int	main(void)
 		process_line(line, &shell);
 		free(line);
 	}
-	return (0);
+	return (shell.last_status);
 }
