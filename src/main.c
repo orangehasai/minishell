@@ -34,6 +34,7 @@ static int	init_shell(t_shell *shell, char **envp)
 	if (!shell->env && errno == ENOMEM)
 		return (1);
 	shell->last_status = 0;
+	return (0);
 }
 
 static void	run_shell(t_shell *shell)
@@ -57,7 +58,6 @@ static void	run_shell(t_shell *shell)
 			free(line);
 			continue ;
 		}
-		debug_print_tokens(tokens);
 		free_tokens(tokens);
 		free(line);
 	}
