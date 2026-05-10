@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "env.h"
+#include "minishell.h"
+#include "lexer.h"
 
 volatile sig_atomic_t	g_signal = 0;
 
@@ -32,12 +34,12 @@ static int	init_shell(t_shell *shell, char **envp)
 	if (!shell->env && errno == ENOMEM)
 		return (1);
 	shell->last_status = 0;
-	return (0);
 }
 
 static void	run_shell(t_shell *shell)
 {
 	char	*line;
+	t_token	*tokens;
 
 	while (1)
 	{
@@ -49,6 +51,14 @@ static void	run_shell(t_shell *shell)
 			break ;
 		}
 		handle_line(line, shell);
+		tokens = lexer(line);
+		if (!tokens)
+		{
+			free(line);
+			continue ;
+		}
+		debug_print_tokens(tokens);
+		free_tokens(tokens);
 		free(line);
 	}
 }
