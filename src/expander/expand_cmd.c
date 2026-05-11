@@ -41,13 +41,15 @@ static void	remove_argv_node(char **argv, size_t argv_i)
 static int	expand_argv(char **argv, t_shell *shell)
 {
 	size_t	argv_i;
+	int		had_quote;
 
 	argv_i = 0;
 	while (argv && argv[argv_i])
 	{
+		had_quote = has_quote(argv[argv_i]);
 		if (!expand_replace_value(&argv[argv_i], shell))
 			return (0);
-		if (!has_quote(argv[argv_i]) && argv[argv_i][0] == '\0')
+		if (!had_quote && argv[argv_i][0] == '\0')
 		{
 			remove_argv_node(argv, argv_i);
 			continue ;
