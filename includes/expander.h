@@ -14,6 +14,7 @@
 # define EXPANDER_H
 
 # include "minishell.h"
+# include "env.h"
 
 typedef enum e_quote_state
 {
@@ -22,7 +23,6 @@ typedef enum e_quote_state
 	QUOTE_DOUBLE,
 }	t_quote_state;
 
-char			*env_get(t_env *env, char *key);
 t_quote_state	update_quote_state(t_quote_state quote, char c);
 char			*expand_dollar(const char *input, size_t *i, t_shell *shell);
 int				append_literal(char **out, char c);
