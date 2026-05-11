@@ -51,6 +51,11 @@ Expected:
 - `argv: [echo] [$-]`
 - 変数名として不正な場合は `$` をリテラルとして残す
 
+Input: `echo $1USER`
+Expected:
+- `argv: [echo] [USER]`
+- `$1` は空文字として扱い、残りは通常文字として連結される
+
 Input: `echo $EMPTY`
 Expected:
 - `argv: [echo] []`

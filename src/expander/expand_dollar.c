@@ -29,22 +29,13 @@ t_quote_state	update_quote_state(t_quote_state quote, char c)
 	return (quote);
 }
 
-char	*expand_dollar(const char *input, size_t *i, t_shell *shell)
+static char	*expand_variable(const char *input, size_t *i, t_shell *shell)
 {
 	char	*expand_target_input;
 	char	*expanded_input;
 	size_t	input_i;
 
-	if (input[*i] != '$')
-		return (NULL);
 	input_i = *i + 1;
-	if (input[input_i] == '?')
-	{
-		*i = input_i;
-		return (ft_itoa(shell->last_status));
-	}
-	if (!ft_isalpha(input[input_i]) && input[input_i] != '_')
-		return (ft_strdup("$"));
 	while (ft_isalnum(input[input_i]) || input[input_i] == '_')
 		input_i++;
 	expand_target_input = ft_substr(input, *i + 1, input_i - *i - 1);
@@ -56,4 +47,26 @@ char	*expand_dollar(const char *input, size_t *i, t_shell *shell)
 	if (!expanded_input)
 		return (ft_strdup(""));
 	return (ft_strdup(expanded_input));
+}
+
+char	*expand_dollar(const char *input, size_t *i, t_shell *shell)
+{
+	size_t	input_i;
+
+	if (input[*i] != '$')
+		return (NULL);
+	input_i = *i + 1;
+	if (input[input_i] == '?')
+	{
+		*i = input_i;
+		return (ft_itoa(shell->last_status));
+	}
+	if (ft_isdigit(input[input_i]))
+	{
+		*i = input_i;
+		return (ft_strdup(""));
+	}
+	if (!ft_isalpha(input[input_i]) && input[input_i] != '_')
+		return (ft_strdup("$"));
+	return (expand_variable(input, i, shell));
 }
