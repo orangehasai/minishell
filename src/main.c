@@ -17,6 +17,20 @@
 
 volatile sig_atomic_t	g_signal;
 
+static void	handle_lexer_error(t_shell *shell, t_lexer_error error)
+{
+	if (error == LEXER_ERR_UNCLOSED_QUOTE)
+	{
+		ft_putstr_fd("minishell: syntax error: unclosed quote\n", 2);
+		shell->last_status = 2;
+	}
+	else
+	{
+		ft_putstr_fd("minishell: internal error\n", 2);
+		shell->last_status = 1;
+	}
+}
+
 static void	handle_parse_error(t_parse_result result, t_token *tokens,
 		t_shell *shell)
 {
@@ -30,32 +44,45 @@ static void	handle_parse_error(t_parse_result result, t_token *tokens,
 	free_tokens(tokens);
 }
 
-static void	process_line(char *line, t_shell *shell)
+static int	handle_expand_stage(t_parse_result result, t_token *tokens,
+		t_shell *shell)
 {
-	t_token			*tokens;
-	t_parse_result	result;
-	int				expand_error;
+	int	expand_error;
 
-	tokens = lexer(line);
-	if (!tokens)
-		return ;
-	result = parser(tokens);
-	if (result.error != PARSE_OK)
-	{
-		handle_parse_error(result, tokens, shell);
-		return ;
-	}
 	expand_error = expander(result.cmds, shell);
 	if (expand_error)
 	{
 		shell->last_status = 1;
 		free_cmds(result.cmds);
 		free_tokens(tokens);
-		return ;
+		return (0);
 	}
 	debug_print_cmds(result.cmds);
 	free_cmds(result.cmds);
 	free_tokens(tokens);
+	return (1);
+}
+
+static void	process_line(char *line, t_shell *shell)
+{
+	t_lexer_result	lexer_result;
+	t_parse_result	parser_result;
+
+	lexer_result = lexer(line);
+	if (!lexer_result.tokens)
+	{
+		handle_lexer_error(shell, lexer_result.error);
+		return ;
+	}
+	parser_result = parser(lexer_result.tokens);
+	if (parser_result.error != PARSE_OK)
+	{
+		handle_parse_error(parser_result, lexer_result.tokens, shell);
+		return ;
+	}
+	if (!handle_expand_stage(parser_result, lexer_result.tokens, shell))
+		return ;
+	shell->last_status = 0;
 }
 
 int	main(void)
