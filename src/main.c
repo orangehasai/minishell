@@ -47,11 +47,20 @@ static void	handle_parse_error(t_parse_result result, t_token *tokens,
 static int	handle_expand_stage(t_parse_result result, t_token *tokens,
 		t_shell *shell)
 {
-	int	expand_error;
+	t_expand_result	expand_result;
 
-	expand_error = expander(result.cmds, shell);
-	if (expand_error)
+	expand_result = expander(result.cmds, shell);
+	if (expand_result.error != EXPAND_OK)
 	{
+		if (expand_result.error == EXPAND_ERR_AMBIGUOUS_REDIR)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			if (expand_result.token)
+				ft_putstr_fd(expand_result.token, 2);
+			else
+				ft_putstr_fd("newline", 2);
+			ft_putstr_fd(": ambiguous redirect\n", 2);
+		}
 		shell->last_status = 1;
 		free_cmds(result.cmds);
 		free_tokens(tokens);

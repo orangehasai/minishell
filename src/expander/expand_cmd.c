@@ -38,7 +38,7 @@ static void	remove_argv_node(char **argv, size_t argv_i)
 	}
 }
 
-static int	expand_argv(char **argv, t_shell *shell)
+static t_expand_error	expand_argv(char **argv, t_shell *shell)
 {
 	size_t	argv_i;
 	int		had_quote;
@@ -48,7 +48,7 @@ static int	expand_argv(char **argv, t_shell *shell)
 	{
 		had_quote = has_quote(argv[argv_i]);
 		if (!expand_replace_value(&argv[argv_i], shell))
-			return (0);
+			return (EXPAND_ERR_INTERNAL);
 		if (!had_quote && argv[argv_i][0] == '\0')
 		{
 			remove_argv_node(argv, argv_i);
@@ -56,35 +56,53 @@ static int	expand_argv(char **argv, t_shell *shell)
 		}
 		argv_i++;
 	}
-	return (1);
+	return (EXPAND_OK);
 }
 
-static int	expand_redirs(t_redir *redirs, t_shell *shell)
+static t_expand_result	expand_redirs(t_redir *redirs, t_shell *shell)
 {
-	t_redir	*current_redir;
+	t_expand_result	result;
+	t_redir			*current_redir;
 
+	result.error = EXPAND_OK;
+	result.token = NULL;
 	current_redir = redirs;
 	while (current_redir)
 	{
 		if (!expand_replace_value(&current_redir->file, shell))
-			return (0);
+		{
+			result.error = EXPAND_ERR_INTERNAL;
+			return (result);
+		}
+		if (current_redir->file[0] == '\0'
+			&& !has_quote(current_redir->raw_file))
+		{
+			result.error = EXPAND_ERR_AMBIGUOUS_REDIR;
+			result.token = current_redir->raw_file;
+			return (result);
+		}
 		current_redir = current_redir->next;
 	}
-	return (1);
+	return (result);
 }
 
-int	expander(t_cmd *cmds, t_shell *shell)
+t_expand_result	expander(t_cmd *cmds, t_shell *shell)
 {
-	t_cmd	*current_cmd;
+	t_expand_result	result;
+	t_cmd			*current_cmd;
 
+	result.error = EXPAND_OK;
+	result.token = NULL;
 	current_cmd = cmds;
 	while (current_cmd)
 	{
-		if (!expand_argv(current_cmd->argv, shell))
-			return (1);
-		if (!expand_redirs(current_cmd->redirs, shell))
-			return (1);
+		result.error = expand_argv(current_cmd->argv, shell);
+		if (result.error != EXPAND_OK)
+			return (result);
+		result = expand_redirs(current_cmd->redirs, shell);
+		if (result.error != EXPAND_OK)
+			return (result);
 		current_cmd = current_cmd->next;
 	}
-	return (0);
+	return (result);
 }

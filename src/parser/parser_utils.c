@@ -80,6 +80,7 @@ static void	free_redirs(t_cmd *cmd)
 	while (redir)
 	{
 		next_redir = redir->next;
+		free(redir->raw_file);
 		free(redir->file);
 		free(redir);
 		redir = next_redir;

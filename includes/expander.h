@@ -37,6 +37,19 @@ typedef struct s_expand_out
 	t_shell	*shell;
 }	t_expand_out;
 
+typedef enum e_expand_error
+{
+	EXPAND_OK,
+	EXPAND_ERR_INTERNAL,
+	EXPAND_ERR_AMBIGUOUS_REDIR,
+}	t_expand_error;
+
+typedef struct s_expand_result
+{
+	t_expand_error	error;
+	char			*token;
+}	t_expand_result;
+
 char			*env_get(t_env *env, char *key);
 t_quote_state	update_quote_state(t_quote_state quote, char c);
 char			*expand_dollar(const char *input, size_t *i, t_shell *shell);
@@ -45,6 +58,6 @@ int				append_expanded(char **out, char *expanded);
 char			*expand_str(const char *input, t_shell *shell, char **origin);
 char			*remove_quotes(const char *input, const char *origin);
 int				expand_replace_value(char **value, t_shell *shell);
-int				expander(t_cmd *cmds, t_shell *shell);
+t_expand_result	expander(t_cmd *cmds, t_shell *shell);
 
 #endif

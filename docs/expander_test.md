@@ -90,6 +90,16 @@ Expected:
 - `cmd[0] redirs: (< /home/alice/in.txt)`
 - `cmd[1] redirs: (>> /home/alice/out.txt)`
 
+Input: `> $UNDEFINED`
+Expected:
+- `minishell: $UNDEFINED: ambiguous redirect`
+- expander はエラーとして返し、実行へ進まない
+
+Input: `> "$UNDEFINED"`
+Expected:
+- ambiguous redirect にならない（クォート付き空文字1語として扱う）
+- redir target は空文字のまま保持され、後段（open）で失敗する
+
 ## エラー/失敗ケース
 
 Input: メモリ確保失敗（`malloc` / `ft_strdup` / `ft_substr`）
