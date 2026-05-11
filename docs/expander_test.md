@@ -43,8 +43,9 @@ Expected:
 
 Input: `echo $UNDEFINED`
 Expected:
-- `argv: [echo] []`
+- `argv: [echo]`
 - 未定義変数は空文字に展開される
+- 未クォートで空文字になった引数ノードは削除される
 
 Input: `echo $-`
 Expected:

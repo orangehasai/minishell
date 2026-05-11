@@ -44,6 +44,7 @@ int				append_literal(char **out, char c);
 int				append_expanded(char **out, char *expanded);
 char			*expand_str(const char *input, t_shell *shell, char **origin);
 char			*remove_quotes(const char *input, const char *origin);
+int				expand_replace_value(char **value, t_shell *shell);
 int				expander(t_cmd *cmds, t_shell *shell);
 
 #endif
