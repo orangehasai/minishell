@@ -13,4 +13,21 @@
 #ifndef EXPANDER_H
 # define EXPANDER_H
 
+# include "minishell.h"
+# include "env.h"
+
+typedef enum e_quote_state
+{
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE,
+}	t_quote_state;
+
+t_quote_state	update_quote_state(t_quote_state quote, char c);
+char			*expand_dollar(const char *input, size_t *i, t_shell *shell);
+int				append_literal(char **out, char c);
+int				append_expanded(char **out, char *expanded);
+char			*expand_str(const char *input, t_shell *shell);
+int				expander(t_cmd *cmds, t_shell *shell);
+
 #endif
