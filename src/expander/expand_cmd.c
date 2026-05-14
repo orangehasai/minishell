@@ -14,16 +14,14 @@
 
 static int	replace_argv_value(char **argv_value, t_shell *shell)
 {
-	char	*expanded_argv;
-	char	*origin;
-	char	*removed_quote_argv;
+	t_expand_result	result;
+	char			*removed_quote_argv;
 
-	expanded_argv = expand_str(*argv_value, shell, &origin);
-	if (!expanded_argv)
+	if (expand_str(*argv_value, shell, &result))
 		return (1);
-	removed_quote_argv = remove_quotes(expanded_argv, origin);
-	free(origin);
-	free(expanded_argv);
+	removed_quote_argv = remove_quotes(result.expanded, result.origin);
+	free(result.origin);
+	free(result.expanded);
 	if (!removed_quote_argv)
 		return (1);
 	free(*argv_value);
