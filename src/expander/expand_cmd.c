@@ -20,15 +20,15 @@ static int	replace_argv_value(char **argv_value, t_shell *shell)
 
 	expanded_argv = expand_str(*argv_value, shell, &origin);
 	if (!expanded_argv)
-		return (0);
+		return (1);
 	removed_quote_argv = remove_quotes(expanded_argv, origin);
 	free(origin);
 	free(expanded_argv);
 	if (!removed_quote_argv)
-		return (0);
+		return (1);
 	free(*argv_value);
 	*argv_value = removed_quote_argv;
-	return (1);
+	return (0);
 }
 
 int	expander(t_cmd *cmds, t_shell *shell)
@@ -42,7 +42,7 @@ int	expander(t_cmd *cmds, t_shell *shell)
 		argv_i = 0;
 		while (current_cmd->argv && current_cmd->argv[argv_i])
 		{
-			if (!replace_argv_value(&current_cmd->argv[argv_i], shell))
+			if (replace_argv_value(&current_cmd->argv[argv_i], shell))
 				return (1);
 			argv_i++;
 		}

@@ -39,11 +39,11 @@ static int	process_remove_char(size_t *i, t_remove_ctx *ctx)
 		next_quote_state = *ctx->current_quote_state;
 	if (!is_input_syntax_quote(ctx->input[*i], *ctx->current_quote_state,
 			next_quote_state, ctx->origin[*i])
-		&& !append_literal(ctx->removed_quote_input, ctx->input[*i]))
-		return (0);
+		&& append_literal(ctx->removed_quote_input, ctx->input[*i]))
+		return (1);
 	*ctx->current_quote_state = next_quote_state;
 	(*i)++;
-	return (1);
+	return (0);
 }
 
 char	*remove_quotes(const char *input, const char *origin)
@@ -66,7 +66,7 @@ char	*remove_quotes(const char *input, const char *origin)
 	i = 0;
 	while (input[i] && origin[i])
 	{
-		if (!process_remove_char(&i, &rem_ctx))
+		if (process_remove_char(&i, &rem_ctx))
 			return (remove_quote_fail(removed_quote_input));
 	}
 	if (input[i] || origin[i])
