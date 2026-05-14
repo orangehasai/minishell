@@ -12,21 +12,20 @@
 
 #include "expander.h"
 
-static int	append_origin_n(char **origin, char flag, size_t n)
+static int	process_plain_char(t_expand_out *out, char c)
 {
-	while (n--)
-	{
-		if (append_literal(origin, flag))
-			return (1);
-	}
+	if (append_literal(out->formatted_input, c))
+		return (1);
+	if (append_literal(out->origin, '1'))
+		return (1);
 	return (0);
 }
 
-static int	process_expand_char(const char *input, size_t *i,
-		t_expand_out *out)
+static int	process_expand_char(const char *input, size_t *i, t_expand_out *out)
 {
 	char	*expanded_input;
 	size_t	expanded_i;
+	size_t	len;
 
 	expanded_i = *i;
 	expanded_input = expand_dollar(input, &expanded_i, out->shell);
@@ -34,21 +33,16 @@ static int	process_expand_char(const char *input, size_t *i,
 		return (1);
 	*i = expanded_i;
 	if (append_expanded(out->formatted_input, expanded_input))
-	{
-		free(expanded_input);
-		return (1);
-	}
-	if (append_origin_n(out->origin, '0', ft_strlen(expanded_input)))
-	{
-		free(expanded_input);
-		return (1);
-	}
-	free(expanded_input);
-	return (0);
+		return (free(expanded_input), 1);
+	len = ft_strlen(expanded_input);
+	while (len-- > 0)
+		if (append_literal(out->origin, '0'))
+			return (free(expanded_input), 1);
+	return (free(expanded_input), 0);
 }
 
-static int	init_expand_str(char **formatted_input, char **origin,
-		t_expand_out *out, t_shell *shell)
+static int	init_expand_out(t_expand_out *out, char **formatted_input,
+		char **origin, t_shell *shell)
 {
 	*origin = ft_strdup("");
 	if (!*origin)
@@ -73,17 +67,6 @@ static char	*expand_fail(char *formatted_input, char *origin)
 	return (NULL);
 }
 
-static int	process_expand_step(const char *input, size_t *i, t_expand_out *out,
-		t_quote_state current_quote_state)
-{
-	if (input[*i] == '$' && current_quote_state != QUOTE_SINGLE)
-		return (process_expand_char(input, i, out));
-	if (append_literal(out->formatted_input, input[*i])
-		|| append_literal(out->origin, '1'))
-		return (1);
-	return (0);
-}
-
 char	*expand_str(const char *input, t_shell *shell, char **origin)
 {
 	size_t			i;
@@ -91,14 +74,18 @@ char	*expand_str(const char *input, t_shell *shell, char **origin)
 	t_quote_state	current_quote_state;
 	t_expand_out	out;
 
-	if (init_expand_str(&formatted_input, origin, &out, shell))
+	if (init_expand_out(&out, &formatted_input, origin, shell))
 		return (NULL);
 	current_quote_state = QUOTE_NONE;
 	i = 0;
 	while (input[i])
 	{
 		current_quote_state = update_quote_state(current_quote_state, input[i]);
-		if (process_expand_step(input, &i, &out, current_quote_state))
+		if (input[i] == '$' && current_quote_state != QUOTE_SINGLE
+			&& process_expand_char(input, &i, &out))
+			return (expand_fail(formatted_input, *origin));
+		else if ((input[i] != '$' || current_quote_state == QUOTE_SINGLE)
+			&& process_plain_char(&out, input[i]))
 			return (expand_fail(formatted_input, *origin));
 		i++;
 	}
