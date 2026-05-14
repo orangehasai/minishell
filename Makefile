@@ -21,6 +21,7 @@ SRCS		= src/main.c \
 			src/expander/expand_dollar.c \
 			src/expander/expand_utils.c \
 			src/expander/expand_cmd.c \
+			src/expander/quote_removal.c \
 			src/parser/parser.c \
 			src/parser/parse_command.c \
 			src/parser/parse_redir.c \

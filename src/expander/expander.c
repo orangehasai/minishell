@@ -12,53 +12,77 @@
 
 #include "expander.h"
 
-static int	process_expand_char(const char *input, size_t *i,
-		char **formatted_input, t_shell *shell)
+static int	process_plain_char(t_expand_ctx *ctx, size_t i)
 {
-	char	*expanded_input;
-	size_t	expanded_i;
-
-	expanded_i = *i;
-	expanded_input = expand_dollar(input, &expanded_i, shell);
-	if (!expanded_input)
+	if (append_literal(&ctx->result.expanded, ctx->input[i]))
 		return (1);
-	*i = expanded_i;
-	if (append_expanded(formatted_input, expanded_input))
-	{
-		free(expanded_input);
+	if (append_literal(&ctx->result.origin, ORIGIN_INPUT))
 		return (1);
-	}
-	free(expanded_input);
 	return (0);
 }
 
-static char	*expand_fail(char *formatted_input)
+static int	process_expand_char(t_expand_ctx *ctx, size_t *i)
 {
-	free(formatted_input);
-	return (NULL);
+	char	*expanded_input;
+
+	expanded_input = expand_dollar(ctx->input, i, ctx->shell);
+	if (!expanded_input)
+		return (1);
+	if (append_expanded(&ctx->result.expanded, expanded_input))
+		return (free(expanded_input), 1);
+	if (append_repeated_char(&ctx->result.origin, ORIGIN_EXPANDED,
+			ft_strlen(expanded_input)))
+		return (free(expanded_input), 1);
+	return (free(expanded_input), 0);
 }
 
-char	*expand_str(const char *input, t_shell *shell)
+static int	init_expand_ctx(t_expand_ctx *ctx, const char *input,
+		t_shell *shell)
+{
+	ctx->input = input;
+	ctx->quote_state = QUOTE_NONE;
+	ctx->shell = shell;
+	ctx->result.origin = ft_strdup("");
+	if (!ctx->result.origin)
+		return (1);
+	ctx->result.expanded = ft_strdup("");
+	if (!ctx->result.expanded)
+	{
+		free(ctx->result.origin);
+		ctx->result.origin = NULL;
+		return (1);
+	}
+	return (0);
+}
+
+static int	expand_fail(t_expand_ctx *ctx)
+{
+	free(ctx->result.expanded);
+	free(ctx->result.origin);
+	return (1);
+}
+
+int	expand_str(const char *input, t_shell *shell, t_expand_result *result)
 {
 	size_t			i;
-	char			*formatted_input;
-	t_quote_state	current_quote_state;
+	t_expand_ctx	ctx;
 
-	formatted_input = ft_strdup("");
-	if (!formatted_input)
-		return (NULL);
-	current_quote_state = QUOTE_NONE;
+	if (!result)
+		return (1);
+	if (init_expand_ctx(&ctx, input, shell))
+		return (1);
 	i = 0;
-	while (input[i])
+	while (ctx.input[i])
 	{
-		current_quote_state = update_quote_state(current_quote_state, input[i]);
-		if (input[i] == '$' && current_quote_state != QUOTE_SINGLE
-			&& process_expand_char(input, &i, &formatted_input, shell))
-			return (expand_fail(formatted_input));
-		else if ((input[i] != '$' || current_quote_state == QUOTE_SINGLE)
-			&& append_literal(&formatted_input, input[i]))
-			return (expand_fail(formatted_input));
+		ctx.quote_state = update_quote_state(ctx.quote_state, ctx.input[i]);
+		if (ctx.input[i] == '$' && ctx.quote_state != QUOTE_SINGLE
+			&& process_expand_char(&ctx, &i))
+			return (expand_fail(&ctx));
+		else if ((ctx.input[i] != '$' || ctx.quote_state == QUOTE_SINGLE)
+			&& process_plain_char(&ctx, i))
+			return (expand_fail(&ctx));
 		i++;
 	}
-	return (formatted_input);
+	*result = ctx.result;
+	return (0);
 }
