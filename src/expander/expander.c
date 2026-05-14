@@ -21,20 +21,15 @@ static int	process_expand_char(const char *input, size_t *i,
 	expanded_i = *i;
 	expanded_input = expand_dollar(input, &expanded_i, shell);
 	if (!expanded_input)
-		return (0);
+		return (1);
 	*i = expanded_i;
-	if (!append_expanded(formatted_input, expanded_input))
+	if (append_expanded(formatted_input, expanded_input))
 	{
 		free(expanded_input);
-		return (0);
+		return (1);
 	}
 	free(expanded_input);
-	return (1);
-}
-
-static int	process_literal_char(char **formatted_input, char c)
-{
-	return (append_literal(formatted_input, c));
+	return (0);
 }
 
 static char	*expand_fail(char *formatted_input)
@@ -58,10 +53,10 @@ char	*expand_str(const char *input, t_shell *shell)
 	{
 		current_quote_state = update_quote_state(current_quote_state, input[i]);
 		if (input[i] == '$' && current_quote_state != QUOTE_SINGLE
-			&& !process_expand_char(input, &i, &formatted_input, shell))
+			&& process_expand_char(input, &i, &formatted_input, shell))
 			return (expand_fail(formatted_input));
 		else if ((input[i] != '$' || current_quote_state == QUOTE_SINGLE)
-			&& !process_literal_char(&formatted_input, input[i]))
+			&& append_literal(&formatted_input, input[i]))
 			return (expand_fail(formatted_input));
 		i++;
 	}

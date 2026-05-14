@@ -23,14 +23,14 @@ int	append_literal(char **out, char c)
 		len = 0;
 	new_out = malloc(sizeof(char) * (len + 2));
 	if (!new_out)
-		return (0);
+		return (1);
 	if (*out)
 		ft_memcpy(new_out, *out, len);
 	new_out[len] = c;
 	new_out[len + 1] = '\0';
 	free(*out);
 	*out = new_out;
-	return (1);
+	return (0);
 }
 
 int	append_expanded(char **out, char *expanded)
@@ -49,7 +49,7 @@ int	append_expanded(char **out, char *expanded)
 		add_len = 0;
 	new_out = malloc(sizeof(char) * (len + add_len + 1));
 	if (!new_out)
-		return (0);
+		return (1);
 	if (*out)
 		ft_memcpy(new_out, *out, len);
 	if (expanded)
@@ -57,5 +57,5 @@ int	append_expanded(char **out, char *expanded)
 	new_out[len + add_len] = '\0';
 	free(*out);
 	*out = new_out;
-	return (1);
+	return (0);
 }
