@@ -75,11 +75,12 @@ int	expand_str(const char *input, t_shell *shell, t_expand_result *result)
 	while (ctx.input[i])
 	{
 		ctx.quote_state = update_quote_state(ctx.quote_state, ctx.input[i]);
-		if (ctx.input[i] == '$' && ctx.quote_state != QUOTE_SINGLE
-			&& process_expand_char(&ctx, &i))
-			return (expand_fail(&ctx));
-		else if ((ctx.input[i] != '$' || ctx.quote_state == QUOTE_SINGLE)
-			&& process_plain_char(&ctx, i))
+		if (ctx.input[i] == '$' && ctx.quote_state != QUOTE_SINGLE)
+		{
+			if (process_expand_char(&ctx, &i))
+				return (expand_fail(&ctx));
+		}
+		else if (process_plain_char(&ctx, i))
 			return (expand_fail(&ctx));
 		i++;
 	}
