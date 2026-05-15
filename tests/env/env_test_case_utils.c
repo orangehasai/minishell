@@ -23,7 +23,9 @@ int	test_env_to_array(void)
 	envp[1] = "PATH=/bin";
 	envp[2] = "EMPTY=";
 	envp[3] = NULL;
-	env = env_init(envp);
+	env = NULL;
+	if (env_init(&env, envp))
+		return (report_result("env_to_array", 0));
 	array = env_to_array(env);
 	node = env_find(env, "PATH");
 	node->value[0] = 'X';
@@ -74,7 +76,9 @@ int	test_env_print_export(void)
 	envp[1] = "A";
 	envp[2] = "EMPTY=";
 	envp[3] = NULL;
-	env = env_init(envp);
+	env = NULL;
+	if (env_init(&env, envp))
+		return (report_result("env_print_export", 0));
 	status = capture_export_output(env, buffer, sizeof(buffer));
 	if (status)
 		return (env_free(env), report_result("env_print_export", 0));
