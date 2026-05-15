@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "expander.h"
 #include "lexer.h"
 #include "parser.h"
 
@@ -33,6 +34,7 @@ static void	process_line(char *line, t_shell *shell)
 {
 	t_token			*tokens;
 	t_parse_result	result;
+	int				expand_error;
 
 	tokens = lexer(line);
 	if (!tokens)
@@ -41,6 +43,14 @@ static void	process_line(char *line, t_shell *shell)
 	if (result.error != PARSE_OK)
 	{
 		handle_parse_error(result, tokens, shell);
+		return ;
+	}
+	expand_error = expander(result.cmds, shell);
+	if (expand_error)
+	{
+		shell->last_status = 1;
+		free_cmds(result.cmds);
+		free_tokens(tokens);
 		return ;
 	}
 	debug_print_cmds(result.cmds);
