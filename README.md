@@ -139,6 +139,7 @@ PR のコメントで `@claude` と書くと追加の質問もできる。
 | `ci.yml` | `.github/workflows/` | ビルド + norminette + valgrind の自動チェック |
 | `claude-review.yml` | `.github/workflows/` | Claude による PR 自動レビュー |
 | `docs/architecture.md` | `docs/` | 設計詳細・実装ガイド |
+| `docs/testing.md` | `docs/` | テストの追加手順と設計ルール |
 | `docs/tasks.md` | `docs/` | 33 タスクの一覧と依存関係 |
 | `docs/norm_v4.1.pdf` | `docs/` | 42 Norm 原文 |
 
