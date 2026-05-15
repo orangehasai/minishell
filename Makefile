@@ -21,6 +21,7 @@ SRCS		= src/main.c \
 			src/lexer/token_utils.c \
 			src/builtins/builtin_pwd.c \
 			src/builtins/builtin_env.c \
+			src/builtins/builtin_cd.c \
 			src/builtins/builtin_utils.c \
 			src/expander/expander.c \
 			src/expander/expand_dollar.c \
