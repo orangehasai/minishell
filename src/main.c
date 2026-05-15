@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "env.h"
 #include "expander.h"
 #include "lexer.h"
 #include "parser.h"
 
-volatile sig_atomic_t	g_signal;
+volatile sig_atomic_t	g_signal = 0;
 
 static void	handle_lexer_error(t_shell *shell, t_lexer_error error)
 {
@@ -85,24 +85,49 @@ static void	process_line(char *line, t_shell *shell)
 	shell->last_status = 0;
 }
 
-int	main(void)
+static int	init_shell(t_shell *shell, char **envp)
+{
+	shell->env = NULL;
+	if (env_init(&shell->env, envp))
+		return (1);
+	shell->last_status = 0;
+	return (0);
+}
+
+static void	run_shell(t_shell *shell)
 {
 	char	*line;
-	t_shell	shell;
 
-	shell.last_status = 0;
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
+		{
+			if (isatty(STDIN_FILENO))
+				ft_putendl_fd("exit", STDOUT_FILENO);
 			break ;
+		}
 		if (!*line)
 		{
 			free(line);
 			continue ;
 		}
-		process_line(line, &shell);
+		add_history(line);
+		process_line(line, shell);
 		free(line);
 	}
-	return (0);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell	shell;
+
+	(void)argc;
+	(void)argv;
+	if (init_shell(&shell, envp))
+		return (1);
+	run_shell(&shell);
+	env_free(shell.env);
+	clear_history();
+	return (shell.last_status);
 }

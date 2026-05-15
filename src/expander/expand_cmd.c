@@ -14,21 +14,19 @@
 
 static int	replace_value(char **value, t_shell *shell)
 {
-	char	*expanded_value;
-	char	*origin;
-	char	*removed_quote_value;
+	char			*removed_quote_value;
+	t_expand_result	result;
 
-	expanded_value = expand_str(*value, shell, &origin);
-	if (!expanded_value)
-		return (0);
-	removed_quote_value = remove_quotes(expanded_value, origin);
-	free(origin);
-	free(expanded_value);
+	if (expand_str(*value, shell, &result))
+		return (1);
+	removed_quote_value = remove_quotes(result.expanded, result.origin);
+	free(result.origin);
+	free(result.expanded);
 	if (!removed_quote_value)
-		return (0);
+		return (1);
 	free(*value);
 	*value = removed_quote_value;
-	return (1);
+	return (0);
 }
 
 static int	expand_argv(char **argv, t_shell *shell)
@@ -38,11 +36,11 @@ static int	expand_argv(char **argv, t_shell *shell)
 	argv_i = 0;
 	while (argv && argv[argv_i])
 	{
-		if (!replace_value(&argv[argv_i], shell))
-			return (0);
+		if (replace_value(&argv[argv_i], shell))
+			return (1);
 		argv_i++;
 	}
-	return (1);
+	return (0);
 }
 
 static int	expand_redirs(t_redir *redirs, t_shell *shell)
@@ -52,11 +50,11 @@ static int	expand_redirs(t_redir *redirs, t_shell *shell)
 	current_redir = redirs;
 	while (current_redir)
 	{
-		if (!replace_value(&current_redir->file, shell))
-			return (0);
+		if (replace_value(&current_redir->file, shell))
+			return (1);
 		current_redir = current_redir->next;
 	}
-	return (1);
+	return (0);
 }
 
 int	expander(t_cmd *cmds, t_shell *shell)
@@ -66,9 +64,9 @@ int	expander(t_cmd *cmds, t_shell *shell)
 	current_cmd = cmds;
 	while (current_cmd)
 	{
-		if (!expand_argv(current_cmd->argv, shell))
+		if (expand_argv(current_cmd->argv, shell))
 			return (1);
-		if (!expand_redirs(current_cmd->redirs, shell))
+		if (expand_redirs(current_cmd->redirs, shell))
 			return (1);
 		current_cmd = current_cmd->next;
 	}

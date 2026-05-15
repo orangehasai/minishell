@@ -117,7 +117,7 @@ typedef struct s_env
 必要な操作関数:
 
 ```c
-t_env   *env_init(char **envp);          // envp → linked list に変換
+int     env_init(t_env **env, char **envp); // envp → linked list に変換
 char    *env_get(t_env *env, char *key); // キーから値を取得（なければ NULL）
 int     env_set(t_env **env, char *key, char *value); // 追加/更新
 int     env_unset(t_env **env, char *key);            // 削除
@@ -185,7 +185,9 @@ int main(int argc, char **argv, char **envp)
 
     (void)argc;
     (void)argv;
-    shell.env = env_init(envp);
+    shell.env = NULL;
+    if (env_init(&shell.env, envp))
+        return (1);
     shell.last_status = 0;
     while (1)
     {
