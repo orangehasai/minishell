@@ -27,7 +27,9 @@ int	test_env_init(void)
 	envp[1] = empty_entry;
 	envp[2] = name_entry;
 	envp[3] = NULL;
-	env = env_init(envp);
+	env = NULL;
+	if (env_init(&env, envp))
+		return (report_result("env_init", 0));
 	user_entry[5] = 'X';
 	if (!env || !strings_equal(env_get(env, "USER"), "alice"))
 		return (report_result("env_init", 0));
