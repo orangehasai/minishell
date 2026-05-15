@@ -26,8 +26,11 @@ int	main(void)
 	passed += test_env_to_array();
 	passed += test_split_key_value();
 	passed += test_env_print_export();
-	printf("%d/9 tests passed\n", passed);
-	if (passed != 9)
+	passed += test_builtin_env_output();
+	passed += test_builtin_env_rejects_args();
+	passed += test_builtin_env_empty_shell();
+	printf("%d/12 tests passed\n", passed);
+	if (passed != 12)
 		return (1);
 	return (0);
 }
