@@ -12,11 +12,38 @@
 
 #include "builtins.h"
 
+static char	*build_env_line(t_env *env)
+{
+	char	*line;
+	char	*temp;
+
+	line = ft_strjoin(env->key, "=");
+	if (!line)
+		return (NULL);
+	temp = line;
+	line = ft_strjoin(temp, env->value);
+	free(temp);
+	if (!line)
+		return (NULL);
+	temp = line;
+	line = ft_strjoin(temp, "\n");
+	free(temp);
+	return (line);
+}
+
 static int	print_env_entry(t_env *env)
 {
-	if (put_str_fd_safe(env->key, 1) && put_str_fd_safe("=", 1)
-		&& put_str_fd_safe(env->value, 1) && put_str_fd_safe("\n", 1))
+	char	*line;
+
+	line = build_env_line(env);
+	if (!line)
 		return (1);
+	if (put_str_fd_safe(line, 1))
+	{
+		free(line);
+		return (1);
+	}
+	free(line);
 	return (0);
 }
 
@@ -37,7 +64,7 @@ int	builtin_env(char **argv, t_shell *shell)
 	{
 		if (current_env->key && current_env->value)
 		{
-			if (!print_env_entry(current_env))
+			if (print_env_entry(current_env))
 			{
 				perror("minishell: env");
 				return (1);

@@ -22,7 +22,7 @@ int	builtin_pwd(void)
 		perror("minishell: pwd");
 		return (1);
 	}
-	if (!put_str_fd_safe(cwd, 1) || !put_str_fd_safe("\n", 1))
+	if (put_str_fd_safe(cwd, 1) || put_str_fd_safe("\n", 1))
 	{
 		perror("minishell: pwd");
 		free(cwd);
