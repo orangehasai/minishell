@@ -47,21 +47,23 @@ static int	add_env_entry(t_env **env, char *entry)
 	return (status);
 }
 
-t_env	*env_init(char **envp)
+int	env_init(t_env **env, char **envp)
 {
-	t_env	*env;
 	int		index;
 
-	env = NULL;
+	if (!env)
+		return (1);
+	*env = NULL;
 	index = 0;
 	while (envp && envp[index])
 	{
-		if (add_env_entry(&env, envp[index]))
+		if (add_env_entry(env, envp[index]))
 		{
-			env_free(env);
-			return (NULL);
+			env_free(*env);
+			*env = NULL;
+			return (1);
 		}
 		index++;
 	}
-	return (env);
+	return (0);
 }

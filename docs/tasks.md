@@ -14,7 +14,7 @@
 - [ ] **0-3: 環境変数の初期化と基本操作** `共同` `~120行`
   - ファイル: `src/env/env_init.c`, `src/env/env_ops.c`, `includes/env.h`
   - 依存: 0-2
-  - t_env 構造体定義。env_init(envp→linked list変換)、env_get、env_set、env_unset、env_free を実装。
+  - t_env 構造体定義。env_init(&env, envp→linked list変換)、env_get、env_set、env_unset、env_free を実装。
 
 - [ ] **0-4: env_to_array と環境変数ユーティリティ** `共同` `~80行`
   - ファイル: `src/env/env_utils.c`

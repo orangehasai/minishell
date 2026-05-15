@@ -345,7 +345,7 @@ typedef struct s_env
 
 | 関数 | 役割 |
 |------|------|
-| `env_init(envp)` | `char **envp` を連結リストに変換 |
+| `env_init(&env, envp)` | `char **envp` を連結リストに変換 |
 | `env_get(env, key)` | キーから値を取得（なければ NULL） |
 | `env_set(&env, key, value)` | 追加または更新 |
 | `env_unset(&env, key)` | 削除 |
