@@ -1,22 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: skeita <skeita@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/21 16:57:05 by skeita            #+#    #+#             */
-/*   Updated: 2026/03/21 16:57:06 by skeita           ###   ########.fr       */
+/*   Created: 2026/05/12 21:08:00 by skeita            #+#    #+#             */
+/*   Updated: 2026/05/12 21:08:00 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "builtins.h"
 
-# include "minishell.h"
+int	builtin_pwd(void)
+{
+	char	*cwd;
 
-int	builtin_pwd(void);
-int	builtin_env(char **argv, t_shell *shell);
-int	put_str_fd_safe(const char *str, int fd);
-
-#endif
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		perror("minishell: pwd");
+		return (1);
+	}
+	if (put_str_fd_safe(cwd, 1) || put_str_fd_safe("\n", 1))
+	{
+		perror("minishell: pwd");
+		free(cwd);
+		return (1);
+	}
+	free(cwd);
+	return (0);
+}

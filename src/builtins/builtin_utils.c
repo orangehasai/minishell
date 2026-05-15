@@ -1,22 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: skeita <skeita@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/21 16:57:05 by skeita            #+#    #+#             */
-/*   Updated: 2026/03/21 16:57:06 by skeita           ###   ########.fr       */
+/*   Created: 2026/05/12 21:48:00 by skeita            #+#    #+#             */
+/*   Updated: 2026/05/12 21:48:00 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "builtins.h"
 
-# include "minishell.h"
+int	put_str_fd_safe(const char *str, int fd)
+{
+	ssize_t	written;
+	size_t	len;
+	size_t	total;
 
-int	builtin_pwd(void);
-int	builtin_env(char **argv, t_shell *shell);
-int	put_str_fd_safe(const char *str, int fd);
-
-#endif
+	if (!str)
+		return (1);
+	len = ft_strlen(str);
+	total = 0;
+	while (total < len)
+	{
+		written = write(fd, str + total, len - total);
+		if (written <= 0)
+			return (1);
+		total += written;
+	}
+	return (0);
+}
