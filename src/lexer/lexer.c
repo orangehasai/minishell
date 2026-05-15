@@ -38,12 +38,47 @@ static int	append_eof_token(t_token **head, t_token **tail)
 	return (1);
 }
 
-t_token	*lexer(char *line)
+static int	has_unclosed_quote(char *line)
+{
+	size_t			i;
+	t_lexer_state	state;
+
+	if (!line)
+		return (1);
+	i = 0;
+	state = NORMAL;
+	while (line[i])
+	{
+		if (state == NORMAL && line[i] == '\'')
+			state = SINGLE_QUOTE;
+		else if (state == NORMAL && line[i] == '"')
+			state = DOUBLE_QUOTE;
+		else if (state == SINGLE_QUOTE && line[i] == '\'')
+			state = NORMAL;
+		else if (state == DOUBLE_QUOTE && line[i] == '"')
+			state = NORMAL;
+		i++;
+	}
+	return (state != NORMAL);
+}
+
+static t_lexer_result	lexer_result(t_token *tokens, t_lexer_error error)
+{
+	t_lexer_result	result;
+
+	result.tokens = tokens;
+	result.error = error;
+	return (result);
+}
+
+t_lexer_result	lexer(char *line)
 {
 	size_t	i;
 	t_token	*head;
 	t_token	*tail;
 
+	if (has_unclosed_quote(line))
+		return (lexer_result(NULL, LEXER_ERR_UNCLOSED_QUOTE));
 	i = 0;
 	head = NULL;
 	tail = NULL;
@@ -55,13 +90,10 @@ t_token	*lexer(char *line)
 		if (!append_current_token(line, &i, &head, &tail))
 		{
 			free_tokens(head);
-			return (NULL);
+			return (lexer_result(NULL, LEXER_ERR_INTERNAL));
 		}
 	}
 	if (!append_eof_token(&head, &tail))
-	{
-		free_tokens(head);
-		return (NULL);
-	}
-	return (head);
+		return (free_tokens(head), lexer_result(NULL, LEXER_ERR_INTERNAL));
+	return (lexer_result(head, LEXER_OK));
 }
