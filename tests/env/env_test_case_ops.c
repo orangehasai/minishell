@@ -38,7 +38,9 @@ int	test_env_unset(void)
 	envp[1] = "B=2";
 	envp[2] = "C=3";
 	envp[3] = NULL;
-	env = env_init(envp);
+	env = NULL;
+	if (env_init(&env, envp))
+		return (report_result("env_unset", 0));
 	env_unset(&env, "A");
 	env_unset(&env, "B");
 	env_unset(&env, "MISSING");
@@ -57,6 +59,9 @@ int	test_env_invalid_args(void)
 
 	env = NULL;
 	success = (env_get(NULL, "A") == NULL);
+	success = success && (env_init(NULL, NULL) == 1);
+	success = success && (env_init(&env, NULL) == 0);
+	success = success && (env == NULL);
 	success = success && (env_set(NULL, "A", "1") == 1);
 	success = success && (env_set(&env, NULL, "1") == 1);
 	success = success && (env_unset(NULL, "A") == 1);
