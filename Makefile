@@ -13,6 +13,7 @@ SRCS		= src/main.c \
 		  	src/env/env_ops.c \
 			src/env/env_utils.c \
 			src/env/env_export.c \
+			src/executor/path_resolve.c \
 			src/lexer/lexer.c \
 			src/lexer/lexer_debug.c \
 			src/lexer/lexer_operator.c \
