@@ -29,16 +29,33 @@ static int	replace_value(char **value, t_shell *shell)
 	return (0);
 }
 
+static void	remove_argv_entry(char **argv, size_t argv_i)
+{
+	free(argv[argv_i]);
+	while (argv[argv_i + 1])
+	{
+		argv[argv_i] = argv[argv_i + 1];
+		argv_i++;
+	}
+	argv[argv_i] = NULL;
+}
+
 static int	expand_argv(char **argv, t_shell *shell)
 {
 	size_t	argv_i;
+	int		has_quote;
 
 	argv_i = 0;
 	while (argv && argv[argv_i])
 	{
+		has_quote = (ft_strchr(argv[argv_i], '\'') != NULL
+				|| ft_strchr(argv[argv_i], '\"') != NULL);
 		if (replace_value(&argv[argv_i], shell))
 			return (1);
-		argv_i++;
+		if (!argv[argv_i][0] && !has_quote)
+			remove_argv_entry(argv, argv_i);
+		else
+			argv_i++;
 	}
 	return (0);
 }
@@ -46,12 +63,23 @@ static int	expand_argv(char **argv, t_shell *shell)
 static int	expand_redirs(t_redir *redirs, t_shell *shell)
 {
 	t_redir	*current_redir;
+	char	*original_file;
+	int		has_quote;
 
 	current_redir = redirs;
 	while (current_redir)
 	{
-		if (replace_value(&current_redir->file, shell))
-			return (1);
+		has_quote = (ft_strchr(current_redir->file, '\'') != NULL
+				|| ft_strchr(current_redir->file, '\"') != NULL);
+		original_file = ft_strdup(current_redir->file);
+		if (!original_file || replace_value(&current_redir->file, shell))
+			return (free(original_file), 1);
+		if (!current_redir->file[0] && !has_quote)
+			return (ft_putstr_fd("minishell: ", 2),
+				ft_putstr_fd(original_file, 2),
+				ft_putendl_fd(": ambiguous redirect", 2),
+				free(original_file), 1);
+		free(original_file);
 		current_redir = current_redir->next;
 	}
 	return (0);
