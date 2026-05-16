@@ -22,6 +22,11 @@ int	main(void)
 	passed += test_exec_missing_command();
 	passed += test_exec_permission_denied();
 	passed += test_exec_path_empty_entry();
+	passed += test_exec_redir_stdout_truncate();
+	passed += test_exec_redir_stdout_append();
+	passed += test_exec_redir_stdin();
+	passed += test_exec_redir_left_to_right();
+	passed += test_exec_redir_heredoc_unsupported();
 	passed += test_exec_builtin_echo();
 	passed += test_exec_builtin_echo_no_newline();
 	passed += test_exec_builtin_echo_multi_n();
@@ -32,8 +37,8 @@ int	main(void)
 	passed += test_exec_builtin_cd();
 	passed += test_exec_builtin_cd_absolute();
 	passed += test_exec_builtin_cd_rejects_args();
-	printf("%d/15 tests passed\n", passed);
-	if (passed != 15)
+	printf("%d/20 tests passed\n", passed);
+	if (passed != 20)
 		return (1);
 	return (0);
 }
