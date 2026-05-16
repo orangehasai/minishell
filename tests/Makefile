@@ -9,12 +9,18 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 OBJ_DIR		= obj
 
 ENV_OBJS	= $(OBJ_DIR)/common/test_output.o \
-		  $(OBJ_DIR)/env/env_test_main.o \
-		  $(OBJ_DIR)/env/env_test_utils.o \
-		  $(OBJ_DIR)/env/env_test_case_init.o \
-		  $(OBJ_DIR)/env/env_test_case_ops.o \
-		  $(OBJ_DIR)/src/env/env_init.o \
-		  $(OBJ_DIR)/src/env/env_ops.o
+			  $(OBJ_DIR)/env/env_test_main.o \
+			  $(OBJ_DIR)/env/env_test_utils.o \
+			  $(OBJ_DIR)/env/env_test_case_init.o \
+			  $(OBJ_DIR)/env/env_test_case_ops.o \
+			  $(OBJ_DIR)/env/env_test_case_utils.o \
+			  $(OBJ_DIR)/env/env_test_case_builtin.o \
+			  $(OBJ_DIR)/src/env/env_init.o \
+			  $(OBJ_DIR)/src/env/env_ops.o \
+			  $(OBJ_DIR)/src/env/env_utils.o \
+			  $(OBJ_DIR)/src/env/env_export.o \
+			  $(OBJ_DIR)/src/builtins/builtin_env.o \
+			  $(OBJ_DIR)/src/builtins/builtin_utils.o
 
 all: env_test
 
@@ -39,6 +45,10 @@ $(OBJ_DIR)/env/%.o: env/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/src/env/%.o: ../src/env/%.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR)/src/builtins/%.o: ../src/builtins/%.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 

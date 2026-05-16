@@ -13,16 +13,34 @@
 #ifndef ENV_TEST_H
 # define ENV_TEST_H
 
+# include "builtins.h"
 # include "env.h"
 # include "test.h"
 
+typedef struct s_capture_env
+{
+	char	*buffer;
+	size_t	size;
+	int		status;
+	int		fd;
+}	t_capture_env;
+
 int		env_count(t_env *env);
 t_env	*env_find(t_env *env, char *key);
+int		env_array_len(char **array);
+void	free_env_array(char **array);
+int		capture_export_output(t_env *env, char *buffer, size_t size);
 int		test_env_init(void);
 int		test_env_set_insert(void);
 int		test_env_set_update(void);
 int		test_env_set_null_value(void);
 int		test_env_unset(void);
 int		test_env_invalid_args(void);
+int		test_env_to_array(void);
+int		test_split_key_value(void);
+int		test_env_print_export(void);
+int		test_builtin_env_output(void);
+int		test_builtin_env_rejects_args(void);
+int		test_builtin_env_empty_shell(void);
 
 #endif

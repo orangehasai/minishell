@@ -12,7 +12,7 @@
 
 #include "lexer.h"
 
-static void	update_word_state(char c, t_lex_state *state)
+static void	update_word_state(char c, t_lexer_state *state)
 {
 	if (*state == NORMAL && c == '\'')
 		*state = SINGLE_QUOTE;
@@ -36,8 +36,8 @@ static t_token	*build_word_token(char *line, size_t start_i, size_t end_i)
 
 t_token	*read_word(char *line, size_t *i)
 {
-	size_t		start_i;
-	t_lex_state	current_state;
+	size_t			start_i;
+	t_lexer_state	current_state;
 
 	start_i = *i;
 	current_state = NORMAL;
