@@ -56,6 +56,8 @@ void	init_exec_case(t_exec_case *case_data, char *buffer, size_t size,
 void	cleanup_exec_case(t_exec_case *case_data);
 int		capture_exec_output(t_cmd *cmd, t_shell *shell,
 			t_capture_exec *capture);
+int		capture_pipeline_output(t_cmd *cmds, t_shell *shell,
+			t_capture_exec *capture);
 int		create_test_file(char *path, mode_t mode, char *content);
 int		report_capture_case(char *name, t_capture_expect *expect,
 			t_capture_exec *capture);
@@ -92,5 +94,11 @@ int		test_exec_builtin_env_rejects_args(void);
 int		test_exec_builtin_cd(void);
 int		test_exec_builtin_cd_absolute(void);
 int		test_exec_builtin_cd_rejects_args(void);
+int		test_exec_pipeline_external(void);
+int		test_exec_pipeline_builtin_echo(void);
+int		test_exec_pipeline_redir(void);
+int		test_exec_pipeline_missing_first(void);
+int		test_exec_pipeline_missing_last(void);
+int		test_exec_pipeline_wait_scope(void);
 
 #endif

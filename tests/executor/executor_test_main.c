@@ -41,8 +41,14 @@ int	main(void)
 	passed += test_exec_builtin_cd();
 	passed += test_exec_builtin_cd_absolute();
 	passed += test_exec_builtin_cd_rejects_args();
-	printf("%d/24 tests passed\n", passed);
-	if (passed != 24)
+	passed += test_exec_pipeline_external();
+	passed += test_exec_pipeline_builtin_echo();
+	passed += test_exec_pipeline_redir();
+	passed += test_exec_pipeline_missing_first();
+	passed += test_exec_pipeline_missing_last();
+	passed += test_exec_pipeline_wait_scope();
+	printf("%d/30 tests passed\n", passed);
+	if (passed != 30)
 		return (1);
 	return (0);
 }
