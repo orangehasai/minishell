@@ -27,39 +27,26 @@ static void	free_env_array(char **array)
 	free(array);
 }
 
-static int	command_status_from_errno(int error_code)
-{
-	if (error_code == ENOENT)
-		return (127);
-	if (error_code == EACCES || error_code == ENOTDIR
-		|| error_code == EISDIR || error_code == ENOEXEC)
-		return (126);
-	return (1);
-}
-
 static void	exec_child_process(t_cmd *cmd, t_shell *shell)
 {
 	char	*path;
 	char	**envp;
-	int		status;
 
 	path = resolve_path(cmd->argv[0], shell);
 	if (!path)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		perror(cmd->argv[0]);
+		print_resolve_error(cmd->argv[0]);
 		exit(command_status_from_errno(errno));
 	}
 	envp = env_to_array(shell->env);
 	if (!envp)
 		exit(1);
 	execve(path, cmd->argv, envp);
-	status = command_status_from_errno(errno);
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	perror(cmd->argv[0]);
+	perror(path);
 	free(path);
 	free_env_array(envp);
-	exit(status);
+	exit(command_status_from_errno(errno));
 }
 
 static int	wait_child_status(pid_t pid)

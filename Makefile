@@ -14,6 +14,7 @@ SRCS		= src/main.c \
 			src/env/env_utils.c \
 			src/env/env_export.c \
 			src/executor/exec_builtin.c \
+			src/executor/exec_error.c \
 			src/executor/exec_simple.c \
 			src/executor/path_resolve.c \
 			src/lexer/lexer.c \
