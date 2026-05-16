@@ -16,6 +16,7 @@ SRCS		= src/main.c \
 			src/executor/exec_builtin.c \
 			src/executor/exec_error.c \
 			src/executor/exec_simple.c \
+			src/executor/redir.c \
 			src/executor/path_resolve.c \
 			src/lexer/lexer.c \
 			src/lexer/lexer_debug.c \
