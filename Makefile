@@ -16,6 +16,10 @@ SRCS		= src/main.c \
 			src/executor/exec_builtin.c \
 			src/executor/exec_builtin_redir.c \
 			src/executor/exec_error.c \
+			src/executor/exec_external.c \
+			src/executor/exec_pipeline.c \
+			src/executor/exec_pipeline_child.c \
+			src/executor/exec_pipeline_wait.c \
 			src/executor/exec_simple.c \
 			src/executor/redir.c \
 			src/executor/path_resolve.c \
