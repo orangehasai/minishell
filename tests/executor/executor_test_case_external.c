@@ -67,7 +67,7 @@ int	test_exec_missing_command(void)
 	return (success);
 }
 
-int	test_exec_path_search_echo(void)
+int	test_exec_path_search_printf(void)
 {
 	char		buffer[32];
 	t_exec_case	case_data;
@@ -76,12 +76,12 @@ int	test_exec_path_search_echo(void)
 
 	init_exec_case(&case_data, buffer, sizeof(buffer), STDOUT_FILENO);
 	case_data.envp[0] = "PATH=/bin:/usr/bin";
-	case_data.argv[0] = "echo";
+	case_data.argv[0] = "printf";
 	case_data.argv[1] = "search";
-	expect.cmdline = "echo search";
+	expect.cmdline = "printf search";
 	expect.stream = "stdout";
 	expect.expected_status = 0;
-	expect.expected_output = "search\n";
+	expect.expected_output = "search";
 	if (init_test_shell(&case_data.shell, case_data.envp)
 		|| capture_exec_output(&case_data.cmd, &case_data.shell,
 			&case_data.capture))
@@ -89,7 +89,7 @@ int	test_exec_path_search_echo(void)
 		case_data.capture.status = -1;
 		ft_strlcpy(buffer, "capture failed", sizeof(buffer));
 	}
-	success = report_capture_case("exec_path_search_echo", &expect,
+	success = report_capture_case("exec_path_search_printf", &expect,
 			&case_data.capture);
 	cleanup_exec_case(&case_data);
 	return (success);
