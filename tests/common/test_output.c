@@ -18,6 +18,7 @@ int	report_result(char *name, int success)
 		printf("PASS: %s\n", name);
 	else
 		printf("FAIL: %s\n", name);
+	fflush(stdout);
 	return (success);
 }
 

@@ -49,8 +49,14 @@ test:
 env_test:
 	$(MAKE) -C $(TESTS_DIR) env_test
 
+executor_test:
+	$(MAKE) -C $(TESTS_DIR) executor_test
+
 run_env_test:
 	$(MAKE) -C $(TESTS_DIR) run_env_test
+
+run_executor_test:
+	$(MAKE) -C $(TESTS_DIR) run_executor_test
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
@@ -73,4 +79,5 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean env_test fclean re run_env_test test
+.PHONY: all clean env_test executor_test fclean re run_env_test \
+	run_executor_test test
