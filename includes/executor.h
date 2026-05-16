@@ -13,4 +13,8 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
+# include "env.h"
+
+char	*resolve_path(char *cmd, t_shell *shell);
+
 #endif
