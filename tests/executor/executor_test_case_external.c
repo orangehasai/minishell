@@ -94,3 +94,26 @@ int	test_exec_path_search_echo(void)
 	cleanup_exec_case(&case_data);
 	return (success);
 }
+
+int	test_exec_builtin_export(void)
+{
+	char		buffer[64];
+	t_exec_case	case_data;
+	int			success;
+
+	init_exec_case(&case_data, buffer, sizeof(buffer), STDOUT_FILENO);
+	case_data.envp[0] = "PATH=/bin:/usr/bin";
+	case_data.argv[0] = "export";
+	case_data.argv[1] = "ABC=xyz";
+	if (init_test_shell(&case_data.shell, case_data.envp)
+		|| capture_exec_output(&case_data.cmd, &case_data.shell,
+			&case_data.capture))
+	{
+		case_data.capture.status = -1;
+		ft_strlcpy(buffer, "capture failed", sizeof(buffer));
+	}
+	success = (case_data.capture.status == 0 && strings_equal(buffer, "")
+			&& strings_equal(env_get(case_data.shell.env, "ABC"), "xyz"));
+	cleanup_exec_case(&case_data);
+	return (report_result("exec_builtin_export", success));
+}

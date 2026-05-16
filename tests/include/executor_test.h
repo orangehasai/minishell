@@ -66,6 +66,7 @@ int		test_exec_path_search_echo(void);
 int		test_exec_missing_command(void);
 int		test_exec_permission_denied(void);
 int		test_exec_path_empty_entry(void);
+int		test_exec_builtin_export(void);
 int		test_exec_builtin_pwd(void);
 int		test_exec_builtin_env(void);
 int		test_exec_builtin_env_rejects_args(void);
