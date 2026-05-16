@@ -16,5 +16,6 @@
 # include "env.h"
 
 char	*resolve_path(char *cmd, t_shell *shell);
+int		exec_simple_cmd(t_cmd *cmd, t_shell *shell);
 
 #endif
