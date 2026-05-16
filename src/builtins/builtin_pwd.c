@@ -12,10 +12,12 @@
 
 #include "builtins.h"
 
-int	builtin_pwd(void)
+int	builtin_pwd(char **argv, t_shell *shell)
 {
 	char	*cwd;
 
+	(void)argv;
+	(void)shell;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{

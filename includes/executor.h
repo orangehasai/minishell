@@ -15,7 +15,11 @@
 
 # include "env.h"
 
+typedef int	(*t_builtin_fn)(char **argv, t_shell *shell);
+
 char	*resolve_path(char *cmd, t_shell *shell);
 int		exec_simple_cmd(t_cmd *cmd, t_shell *shell);
+int		is_builtin_cmd(char *cmd);
+int		exec_builtin_cmd(t_cmd *cmd, t_shell *shell);
 
 #endif

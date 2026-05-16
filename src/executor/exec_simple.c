@@ -81,6 +81,8 @@ int	exec_simple_cmd(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd || !cmd->argv || !cmd->argv[0] || !shell)
 		return (1);
+	if (is_builtin_cmd(cmd->argv[0]))
+		return (exec_builtin_cmd(cmd, shell));
 	pid = fork();
 	if (pid < 0)
 	{
