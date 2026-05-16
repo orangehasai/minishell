@@ -11,6 +11,7 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 OBJ_DIR		= obj
 
 ENV_OBJS	= $(OBJ_DIR)/common/test_output.o \
+			  $(OBJ_DIR)/env/env_test_report.o \
 			  $(OBJ_DIR)/env/env_test_main.o \
 			  $(OBJ_DIR)/env/env_test_utils.o \
 			  $(OBJ_DIR)/env/env_test_case_init.o \

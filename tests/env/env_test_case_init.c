@@ -19,6 +19,7 @@ int	test_env_init(void)
 	char	name_entry[8];
 	char	*envp[4];
 	t_env	*env;
+	int		success;
 
 	ft_strlcpy(user_entry, "USER=alice", sizeof(user_entry));
 	ft_strlcpy(empty_entry, "EMPTY=", sizeof(empty_entry));
@@ -28,34 +29,46 @@ int	test_env_init(void)
 	envp[2] = name_entry;
 	envp[3] = NULL;
 	env = NULL;
-	if (env_init(&env, envp))
-		return (report_result("env_init", 0));
+	success = (env_init(&env, envp) == 0);
 	user_entry[5] = 'X';
-	if (!env || !strings_equal(env_get(env, "USER"), "alice"))
-		return (report_result("env_init", 0));
-	if (!strings_equal(env_get(env, "EMPTY"), ""))
-		return (env_free(env), report_result("env_init", 0));
-	if (env_get(env, "NOVALUE") || env_count(env) != 3)
-		return (env_free(env), report_result("env_init", 0));
+	success = success && env && strings_equal(env_get(env, "USER"), "alice");
+	success = success && strings_equal(env_get(env, "EMPTY"), "");
+	success = success && (env_get(env, "NOVALUE") == NULL);
+	success = success && (env_count(env) == 3);
+	print_env_case("env_init", "env_init([USER=alice, EMPTY=, NOVALUE])");
+	print_env_text("expected_USER", "alice");
+	print_env_text("actual_USER", env_get(env, "USER"));
+	print_env_text("expected_EMPTY", "");
+	print_env_text("actual_EMPTY", env_get(env, "EMPTY"));
+	print_env_text("expected_NOVALUE", NULL);
+	print_env_text("actual_NOVALUE", env_get(env, "NOVALUE"));
+	print_env_int("expected_count", 3);
+	print_env_int("actual_count", env_count(env));
 	env_free(env);
-	return (report_result("env_init", 1));
+	return (report_result("env_init", success));
 }
 
 int	test_env_set_insert(void)
 {
 	t_env	*env;
 	int		status;
+	int		success;
 
 	env = NULL;
 	status = env_set(&env, "PATH", "/bin");
-	if (status || env_count(env) != 1)
-		return (report_result("env_set_insert", 0));
-	if (!strings_equal(env_get(env, "PATH"), "/bin"))
-		return (env_free(env), report_result("env_set_insert", 0));
-	if (!strings_equal(env->key, "PATH"))
-		return (env_free(env), report_result("env_set_insert", 0));
+	success = (status == 0);
+	success = success && (env_count(env) == 1);
+	success = success && strings_equal(env_get(env, "PATH"), "/bin");
+	success = success && env && strings_equal(env->key, "PATH");
+	print_env_case("env_set_insert", "env_set(PATH=/bin) on empty env");
+	print_env_int("expected_status", 0);
+	print_env_int("actual_status", status);
+	print_env_int("expected_count", 1);
+	print_env_int("actual_count", env_count(env));
+	print_env_text("expected_PATH", "/bin");
+	print_env_text("actual_PATH", env_get(env, "PATH"));
 	env_free(env);
-	return (report_result("env_set_insert", 1));
+	return (report_result("env_set_insert", success));
 }
 
 int	test_env_set_update(void)
@@ -63,16 +76,24 @@ int	test_env_set_update(void)
 	t_env	*env;
 	char	value[8];
 	int		status;
+	int		success;
 
 	env = NULL;
 	ft_strlcpy(value, "second", sizeof(value));
 	status = env_set(&env, "PATH", "first");
 	status += env_set(&env, "PATH", value);
 	value[0] = 'X';
-	if (status || env_count(env) != 1)
-		return (report_result("env_set_update", 0));
-	if (!strings_equal(env_get(env, "PATH"), "second"))
-		return (env_free(env), report_result("env_set_update", 0));
+	success = (status == 0);
+	success = success && (env_count(env) == 1);
+	success = success && strings_equal(env_get(env, "PATH"), "second");
+	print_env_case("env_set_update",
+		"env_set(PATH=first) then env_set(PATH=second)");
+	print_env_int("expected_status", 0);
+	print_env_int("actual_status", status);
+	print_env_int("expected_count", 1);
+	print_env_int("actual_count", env_count(env));
+	print_env_text("expected_PATH", "second");
+	print_env_text("actual_PATH", env_get(env, "PATH"));
 	env_free(env);
-	return (report_result("env_set_update", 1));
+	return (report_result("env_set_update", success));
 }
