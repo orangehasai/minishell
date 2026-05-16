@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "env.h"
+#include "executor.h"
 #include "expander.h"
 #include "lexer.h"
 #include "parser.h"
@@ -50,7 +51,14 @@ static int	handle_expand_stage(t_parse_result parser_result, t_token *tokens,
 		free_tokens(tokens);
 		return (0);
 	}
-	debug_print_cmds(parser_result.cmds);
+	if (!parser_result.cmds->next && !parser_result.cmds->redirs)
+		shell->last_status = exec_simple_cmd(parser_result.cmds, shell);
+	else
+	{
+		ft_putendl_fd("minishell: pipeline/redirection not supported yet", 2);
+		debug_print_cmds(parser_result.cmds);
+		shell->last_status = 1;
+	}
 	free_cmds(parser_result.cmds);
 	free_tokens(tokens);
 	return (1);
@@ -75,7 +83,6 @@ static void	process_line(char *line, t_shell *shell)
 	}
 	if (!handle_expand_stage(parser_result, lexer_result.tokens, shell))
 		return ;
-	shell->last_status = 0;
 }
 
 static void	run_shell(t_shell *shell)
