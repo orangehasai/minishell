@@ -26,11 +26,15 @@ int	main(void)
 	passed += test_exec_builtin_pwd();
 	passed += test_exec_builtin_env();
 	passed += test_exec_builtin_env_rejects_args();
+	passed += test_exec_builtin_unset();
+	passed += test_exec_builtin_unset_invalid_identifier();
+	passed += test_exec_builtin_unset_partial_error();
+	passed += test_exec_unset_path_then_ls();
 	passed += test_exec_builtin_cd();
 	passed += test_exec_builtin_cd_absolute();
 	passed += test_exec_builtin_cd_rejects_args();
-	printf("%d/12 tests passed\n", passed);
-	if (passed != 12)
+	printf("%d/16 tests passed\n", passed);
+	if (passed != 16)
 		return (1);
 	return (0);
 }

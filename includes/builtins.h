@@ -19,6 +19,7 @@ int	builtin_pwd(char **argv, t_shell *shell);
 int	builtin_env(char **argv, t_shell *shell);
 int	builtin_cd(char **argv, t_shell *shell);
 int	builtin_export(char **argv, t_shell *shell);
+int	builtin_unset(char **argv, t_shell *shell);
 int	put_str_fd_safe(const char *str, int fd);
 
 #endif

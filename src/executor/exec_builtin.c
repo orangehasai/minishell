@@ -25,6 +25,8 @@ static t_builtin_fn	find_builtin_cmd(char *cmd)
 		return (builtin_pwd);
 	if (ft_strncmp(cmd, "export", 7) == 0)
 		return (builtin_export);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (builtin_unset);
 	return (NULL);
 }
 
