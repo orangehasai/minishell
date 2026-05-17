@@ -77,7 +77,7 @@ int	test_exec_builtin_cd(void)
 	if (!values[0] || !values[1] || !values[2]
 		|| prepare_cd_case(&case_data, values[1]))
 		return (finish_cd_test(&case_data, values, 0));
-	status = exec_simple_cmd(&case_data.cmd, &case_data.shell);
+	status = execute(&case_data.cmd, &case_data.shell);
 	expect.cmdline = "cd executor_cd_dir";
 	expect.expected_status = 0;
 	expect.oldpwd = values[0];
@@ -107,7 +107,7 @@ int	test_exec_builtin_cd_absolute(void)
 		|| mkdir("executor_cd_abs_dir", 0755) == -1
 		|| prepare_cd_case_with_target(&case_data, values[1], values[2]))
 		return (finish_cd_test(&case_data, values, 0));
-	status = exec_simple_cmd(&case_data.cmd, &case_data.shell);
+	status = execute(&case_data.cmd, &case_data.shell);
 	expect.cmdline = "cd /abs/path/to/executor_cd_abs_dir";
 	expect.expected_status = 0;
 	expect.oldpwd = values[0];

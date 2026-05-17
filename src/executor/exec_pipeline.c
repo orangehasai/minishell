@@ -94,7 +94,7 @@ int	exec_pipeline(t_cmd *cmds, t_shell *shell)
 		free(pids);
 		return (1);
 	}
-	status = wait_pipeline(pids, count, pids[count - 1]);
+	status = wait_all(pids, count, pids[count - 1]);
 	free(pids);
 	return (status);
 }

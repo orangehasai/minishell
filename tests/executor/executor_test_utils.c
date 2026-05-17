@@ -55,7 +55,7 @@ int	capture_exec_output(t_cmd *cmd, t_shell *shell, t_capture_exec *capture)
 	if (dup2(pipe_fd[1], capture->fd) == -1)
 		return (close(save_fd), close(pipe_fd[0]), close(pipe_fd[1]), 1);
 	close(pipe_fd[1]);
-	capture->status = exec_simple_cmd(cmd, shell);
+	capture->status = execute(cmd, shell);
 	if (dup2(save_fd, capture->fd) == -1)
 		return (close(save_fd), close(pipe_fd[0]), 1);
 	close(save_fd);
@@ -83,7 +83,7 @@ int	capture_pipeline_output(t_cmd *cmds, t_shell *shell,
 	if (dup2(pipe_fd[1], capture->fd) == -1)
 		return (close(save_fd), close(pipe_fd[0]), close(pipe_fd[1]), 1);
 	close(pipe_fd[1]);
-	capture->status = exec_pipeline(cmds, shell);
+	capture->status = execute(cmds, shell);
 	if (dup2(save_fd, capture->fd) == -1)
 		return (close(save_fd), close(pipe_fd[0]), 1);
 	close(save_fd);

@@ -58,7 +58,7 @@ int	test_exec_redir_stdout_truncate(void)
 	case_data.cmd.redirs = &redir;
 	unlink(redir.file);
 	init_test_shell(&case_data.shell, case_data.envp);
-	status = exec_simple_cmd(&case_data.cmd, &case_data.shell);
+	status = execute(&case_data.cmd, &case_data.shell);
 	read_test_file(redir.file, buffer, sizeof(buffer));
 	unlink(redir.file);
 	cleanup_exec_case(&case_data);
@@ -81,7 +81,7 @@ int	test_exec_redir_stdout_append(void)
 	redir.next = NULL;
 	case_data.cmd.redirs = &redir;
 	init_test_shell(&case_data.shell, case_data.envp);
-	status = exec_simple_cmd(&case_data.cmd, &case_data.shell);
+	status = execute(&case_data.cmd, &case_data.shell);
 	read_test_file(redir.file, buffer, sizeof(buffer));
 	unlink(redir.file);
 	cleanup_exec_case(&case_data);
@@ -139,7 +139,7 @@ int	test_exec_redir_left_to_right(void)
 	unlink(first.file);
 	unlink(second.file);
 	init_test_shell(&case_data.shell, case_data.envp);
-	status = exec_simple_cmd(&case_data.cmd, &case_data.shell);
+	status = execute(&case_data.cmd, &case_data.shell);
 	read_test_file(first.file, buf1, sizeof(buf1));
 	read_test_file(second.file, buf2, sizeof(buf2));
 	paths[0] = first.file;

@@ -17,11 +17,12 @@ SRCS		= src/main.c \
 			src/executor/exec_builtin_redir.c \
 			src/executor/exec_error.c \
 			src/executor/exec_external.c \
+			src/executor/executor.c \
 			src/executor/exec_pipeline.c \
 			src/executor/exec_pipeline_child.c \
-			src/executor/exec_pipeline_wait.c \
 			src/executor/exec_simple.c \
 			src/executor/redir.c \
+			src/executor/wait.c \
 			src/executor/path_resolve.c \
 			src/lexer/lexer.c \
 			src/lexer/lexer_debug.c \
