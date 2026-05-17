@@ -12,6 +12,11 @@
 
 #include "builtins.h"
 
+static int	is_blank(char c)
+{
+	return (c == ' ' || (c >= '\t' && c <= '\r'));
+}
+
 static int	parse_digits(char *arg, int i, int sign, unsigned long long *num)
 {
 	unsigned long long	limit;
@@ -25,6 +30,8 @@ static int	parse_digits(char *arg, int i, int sign, unsigned long long *num)
 		*num = *num * 10 + (unsigned long long)(arg[i] - '0');
 		i++;
 	}
+	while (is_blank(arg[i]))
+		i++;
 	if (arg[i] != '\0')
 		return (1);
 	return (0);
@@ -41,15 +48,15 @@ static int	parse_exit_code(char *arg, int *status)
 	i = 0;
 	if (!arg || !arg[0])
 		return (1);
+	while (is_blank(arg[i]))
+		i++;
 	if (arg[i] == '+' || arg[i] == '-')
 	{
 		if (arg[i] == '-')
 			sign = -1;
 		i++;
 	}
-	if (!ft_isdigit(arg[i]))
-		return (1);
-	if (parse_digits(arg, i, sign, &num))
+	if (!ft_isdigit(arg[i]) || parse_digits(arg, i, sign, &num))
 		return (1);
 	if (sign > 0)
 		*status = (unsigned char)(num % 256);
