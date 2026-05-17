@@ -114,7 +114,7 @@ int	test_exec_pipeline_redir(void)
 	init_cmd(&cmd1, argv1, &in_redir, &cmd2);
 	unlink(out_redir.file);
 	init_test_shell(&shell, (char *[]){"PATH=/bin:/usr/bin", NULL});
-	status = exec_pipeline(&cmd1, &shell);
+	status = execute(&cmd1, &shell);
 	if (read_test_file(out_redir.file, buffer, sizeof(buffer)))
 		ft_strlcpy(buffer, "read failed", sizeof(buffer));
 	unlink(in_redir.file);
@@ -199,7 +199,7 @@ int	test_exec_pipeline_wait_scope(void)
 	if (helper_pid == 0)
 		exit(42);
 	init_test_shell(&shell, (char *[]){"PATH=/bin:/usr/bin", NULL});
-	status = exec_pipeline(&cmd1, &shell);
+	status = execute(&cmd1, &shell);
 	success = (status == 0 && waitpid(helper_pid, &helper_status, 0) == helper_pid
 			&& WIFEXITED(helper_status) && WEXITSTATUS(helper_status) == 42);
 	printf("CASE: exec_pipeline_wait_scope\n");

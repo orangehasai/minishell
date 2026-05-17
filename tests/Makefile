@@ -50,11 +50,12 @@ EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/src/executor/exec_builtin_redir.o \
 			  $(OBJ_DIR)/src/executor/exec_error.o \
 			  $(OBJ_DIR)/src/executor/exec_external.o \
+			  $(OBJ_DIR)/src/executor/executor.o \
 			  $(OBJ_DIR)/src/executor/exec_pipeline.o \
 			  $(OBJ_DIR)/src/executor/exec_pipeline_child.o \
-			  $(OBJ_DIR)/src/executor/exec_pipeline_wait.o \
 			  $(OBJ_DIR)/src/executor/exec_simple.o \
 			  $(OBJ_DIR)/src/executor/redir.o \
+			  $(OBJ_DIR)/src/executor/wait.o \
 			  $(OBJ_DIR)/src/executor/path_resolve.o
 
 all: env_test executor_test

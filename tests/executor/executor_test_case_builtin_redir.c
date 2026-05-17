@@ -36,7 +36,7 @@ static int	run_file_case(t_exec_case *case_data, t_redir *redir, char *path,
 	unlink(path);
 	case_data->cmd.redirs = redir;
 	init_test_shell(&case_data->shell, case_data->envp);
-	status = exec_simple_cmd(&case_data->cmd, &case_data->shell);
+	status = execute(&case_data->cmd, &case_data->shell);
 	if (read_test_file(path, buffer, 512))
 		ft_strlcpy(buffer, "read failed", 512);
 	unlink(path);
