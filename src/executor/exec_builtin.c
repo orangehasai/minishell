@@ -25,6 +25,8 @@ static t_builtin_fn	find_builtin_cmd(char *cmd)
 		return (builtin_env);
 	if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (builtin_pwd);
+	if (ft_strncmp(cmd, "export", 7) == 0)
+		return (builtin_export);
 	return (NULL);
 }
 

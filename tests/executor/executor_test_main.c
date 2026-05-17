@@ -22,6 +22,7 @@ int	main(void)
 	passed += test_exec_missing_command();
 	passed += test_exec_permission_denied();
 	passed += test_exec_path_empty_entry();
+	passed += test_exec_builtin_export();
 	passed += test_exec_redir_stdout_truncate();
 	passed += test_exec_redir_stdout_append();
 	passed += test_exec_redir_stdin();

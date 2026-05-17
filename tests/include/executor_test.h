@@ -73,6 +73,7 @@ int		test_exec_path_search_printf(void);
 int		test_exec_missing_command(void);
 int		test_exec_permission_denied(void);
 int		test_exec_path_empty_entry(void);
+int		test_exec_builtin_export(void);
 int		test_exec_redir_stdout_truncate(void);
 int		test_exec_redir_stdout_append(void);
 int		test_exec_redir_stdin(void);
