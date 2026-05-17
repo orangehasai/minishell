@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "executor.h"
+#include "signals.h"
 
 static pid_t	start_pipeline_cmd(t_cmd *cmd, t_shell *shell, int prev_fd,
 		int pipe_fd[2])
@@ -25,7 +26,10 @@ static pid_t	start_pipeline_cmd(t_cmd *cmd, t_shell *shell, int prev_fd,
 	if (pid < 0)
 		return (perror("fork"), -1);
 	if (pid == 0)
+	{
+		setup_signals_child();
 		exec_pipeline_child(cmd, shell, prev_fd, pipe_fd);
+	}
 	return (pid);
 }
 
@@ -89,12 +93,17 @@ int	exec_pipeline(t_cmd *cmds, t_shell *shell)
 	pids = malloc(sizeof(pid_t) * count);
 	if (!pids)
 		return (1);
+	setup_signals_parent_wait();
 	if (launch_pipeline(cmds, shell, pids))
 	{
+		if (isatty(STDIN_FILENO))
+			setup_signals_interactive();
 		free(pids);
 		return (1);
 	}
 	status = wait_all(pids, count, pids[count - 1]);
+	if (isatty(STDIN_FILENO))
+		setup_signals_interactive();
 	free(pids);
 	return (status);
 }
