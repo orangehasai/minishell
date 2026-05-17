@@ -14,8 +14,10 @@ SRCS		= src/main.c \
 			src/env/env_utils.c \
 			src/env/env_export.c \
 			src/executor/exec_builtin.c \
+			src/executor/exec_builtin_redir.c \
 			src/executor/exec_error.c \
 			src/executor/exec_simple.c \
+			src/executor/redir.c \
 			src/executor/path_resolve.c \
 			src/lexer/lexer.c \
 			src/lexer/lexer_debug.c \
@@ -23,6 +25,7 @@ SRCS		= src/main.c \
 			src/lexer/lexer_utils.c \
 			src/lexer/lexer_word.c \
 			src/lexer/token_utils.c \
+			src/builtins/builtin_echo.c \
 			src/builtins/builtin_pwd.c \
 			src/builtins/builtin_env.c \
 			src/builtins/builtin_cd.c \

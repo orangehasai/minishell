@@ -39,11 +39,18 @@ static void	print_identifier_error(char *arg)
 
 static int	should_skip_export(t_shell *shell, char *arg, char *key)
 {
+	t_env	*current;
+
 	if (ft_strchr(arg, '='))
 		return (0);
-	if (!env_get(shell->env, key))
-		return (0);
-	return (1);
+	current = shell->env;
+	while (current)
+	{
+		if (ft_strncmp(current->key, key, ft_strlen(key) + 1) == 0)
+			return (1);
+		current = current->next;
+	}
+	return (0);
 }
 
 static int	apply_export_arg(t_shell *shell, char *arg)
@@ -75,9 +82,9 @@ int	builtin_export(char **argv, t_shell *shell)
 	int	i;
 	int	status;
 
-	if (!shell)
+	if (!shell || !argv || !argv[0])
 		return (1);
-	if (!argv || !argv[1])
+	if (!argv[1])
 		return (env_print_export(shell->env));
 	i = 1;
 	status = 0;

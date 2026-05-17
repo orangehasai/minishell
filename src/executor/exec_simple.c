@@ -32,6 +32,10 @@ static void	exec_child_process(t_cmd *cmd, t_shell *shell)
 	char	*path;
 	char	**envp;
 
+	if (apply_redirections(cmd->redirs))
+		exit(1);
+	if (!cmd->argv || !cmd->argv[0])
+		exit(0);
 	path = resolve_path(cmd->argv[0], shell);
 	if (!path)
 	{
@@ -66,10 +70,14 @@ int	exec_simple_cmd(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
 
-	if (!cmd || !cmd->argv || !cmd->argv[0] || !shell)
+	if (!cmd || !shell)
 		return (1);
-	if (is_builtin_cmd(cmd->argv[0]))
+	if (cmd->argv && cmd->argv[0] && is_builtin_cmd(cmd->argv[0])
+		&& !cmd->redirs)
 		return (exec_builtin_cmd(cmd, shell));
+	if (cmd->argv && cmd->argv[0] && is_builtin_cmd(cmd->argv[0])
+		&& cmd->redirs)
+		return (exec_builtin_with_redir(cmd, shell));
 	pid = fork();
 	if (pid < 0)
 	{
