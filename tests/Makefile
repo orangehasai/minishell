@@ -31,6 +31,7 @@ EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/executor/executor_test_report.o \
 			  $(OBJ_DIR)/executor/executor_test_case_external.o \
 			  $(OBJ_DIR)/executor/executor_test_case_echo.o \
+			  $(OBJ_DIR)/executor/executor_test_case_redir.o \
 			  $(OBJ_DIR)/executor/executor_test_case_builtin.o \
 			  $(OBJ_DIR)/executor/executor_test_case_cd.o \
 			  $(OBJ_DIR)/executor/executor_test_case_path.o \
@@ -46,6 +47,7 @@ EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/src/executor/exec_builtin.o \
 			  $(OBJ_DIR)/src/executor/exec_error.o \
 			  $(OBJ_DIR)/src/executor/exec_simple.o \
+			  $(OBJ_DIR)/src/executor/redir.o \
 			  $(OBJ_DIR)/src/executor/path_resolve.o
 
 all: env_test executor_test

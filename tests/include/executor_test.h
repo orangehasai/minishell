@@ -61,11 +61,20 @@ int		report_capture_case(char *name, t_capture_expect *expect,
 			t_capture_exec *capture);
 int		report_cd_case(char *name, int actual_status, t_cd_expect *expect,
 			t_shell *shell);
+int		report_file_case(char *name, char *cmdline, int expected_status,
+			int actual_status, char *path, char *expected, char *actual);
+int		report_dual_file_case(char *name, char *cmdline, int expected_status,
+			int actual_status, char **paths, char **expected, char **actual);
 int		test_exec_external_echo(void);
 int		test_exec_path_search_printf(void);
 int		test_exec_missing_command(void);
 int		test_exec_permission_denied(void);
 int		test_exec_path_empty_entry(void);
+int		test_exec_redir_stdout_truncate(void);
+int		test_exec_redir_stdout_append(void);
+int		test_exec_redir_stdin(void);
+int		test_exec_redir_left_to_right(void);
+int		test_exec_redir_heredoc_unsupported(void);
 int		test_exec_builtin_echo(void);
 int		test_exec_builtin_echo_no_newline(void);
 int		test_exec_builtin_echo_multi_n(void);
