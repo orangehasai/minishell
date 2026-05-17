@@ -51,14 +51,8 @@ static void	handle_expand_stage(t_parse_result parser_result, t_token *tokens,
 		free_tokens(tokens);
 		return ;
 	}
-	if (!parser_result.cmds->next)
-		shell->last_status = exec_simple_cmd(parser_result.cmds, shell);
-	else
-	{
-		ft_putendl_fd("minishell: pipeline not supported yet", 2);
-		debug_print_cmds(parser_result.cmds);
-		shell->last_status = 1;
-	}
+	if (parser_result.cmds)
+		shell->last_status = execute(parser_result.cmds, shell);
 	free_cmds(parser_result.cmds);
 	free_tokens(tokens);
 }
