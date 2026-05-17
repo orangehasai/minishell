@@ -77,10 +77,7 @@ int	exec_simple_cmd(t_cmd *cmd, t_shell *shell)
 		return (exec_builtin_cmd(cmd, shell));
 	if (cmd->argv && cmd->argv[0] && is_builtin_cmd(cmd->argv[0])
 		&& cmd->redirs)
-	{
-		ft_putendl_fd("minishell: builtin redirection not supported yet", 2);
-		return (1);
-	}
+		return (exec_builtin_with_redir(cmd, shell));
 	pid = fork();
 	if (pid < 0)
 	{

@@ -24,5 +24,6 @@ int		apply_redirections(t_redir *redirs);
 int		exec_simple_cmd(t_cmd *cmd, t_shell *shell);
 int		is_builtin_cmd(char *cmd);
 int		exec_builtin_cmd(t_cmd *cmd, t_shell *shell);
+int		exec_builtin_with_redir(t_cmd *cmd, t_shell *shell);
 
 #endif
