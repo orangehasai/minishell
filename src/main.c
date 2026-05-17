@@ -15,6 +15,7 @@
 #include "expander.h"
 #include "lexer.h"
 #include "parser.h"
+#include "signals.h"
 
 volatile sig_atomic_t	g_signal = 0;
 
@@ -81,6 +82,8 @@ static void	run_shell(t_shell *shell)
 {
 	char	*line;
 
+	if (isatty(STDIN_FILENO))
+		setup_signals_interactive();
 	while (1)
 	{
 		line = readline("minishell$ ");
