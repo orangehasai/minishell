@@ -62,10 +62,14 @@ int		report_capture_case(char *name, t_capture_expect *expect,
 int		report_cd_case(char *name, int actual_status, t_cd_expect *expect,
 			t_shell *shell);
 int		test_exec_external_echo(void);
-int		test_exec_path_search_echo(void);
+int		test_exec_path_search_printf(void);
 int		test_exec_missing_command(void);
 int		test_exec_permission_denied(void);
 int		test_exec_path_empty_entry(void);
+int		test_exec_builtin_echo(void);
+int		test_exec_builtin_echo_no_newline(void);
+int		test_exec_builtin_echo_multi_n(void);
+int		test_exec_builtin_echo_invalid_n_flag(void);
 int		test_exec_builtin_pwd(void);
 int		test_exec_builtin_env(void);
 int		test_exec_builtin_env_rejects_args(void);
