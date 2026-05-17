@@ -26,6 +26,7 @@ ENV_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/src/builtins/builtin_utils.o
 
 EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
+			  $(OBJ_DIR)/common/test_signal_global.o \
 			  $(OBJ_DIR)/executor/executor_test_main.o \
 			  $(OBJ_DIR)/executor/executor_test_utils.o \
 			  $(OBJ_DIR)/executor/executor_test_report.o \
@@ -58,6 +59,7 @@ EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/src/executor/exec_simple.o \
 			  $(OBJ_DIR)/src/executor/redir.o \
 			  $(OBJ_DIR)/src/executor/wait.o \
+			  $(OBJ_DIR)/src/signals/signals.o \
 			  $(OBJ_DIR)/src/executor/path_resolve.o
 
 all: env_test executor_test
@@ -81,7 +83,7 @@ $(NAME_ENV): $(ENV_OBJS)
 
 $(NAME_EXEC): $(EXEC_OBJS)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(EXEC_OBJS) -L $(LIBFT_DIR) -lft -o $(NAME_EXEC)
+	$(CC) $(CFLAGS) $(EXEC_OBJS) -L $(LIBFT_DIR) -lft -lreadline -o $(NAME_EXEC)
 
 $(OBJ_DIR)/common/%.o: common/%.c $(TEST_HEADERS)
 	mkdir -p $(dir $@)
@@ -104,6 +106,10 @@ $(OBJ_DIR)/src/builtins/%.o: ../src/builtins/%.c $(TEST_HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/src/executor/%.o: ../src/executor/%.c $(TEST_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR)/src/signals/%.o: ../src/signals/%.c $(TEST_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 

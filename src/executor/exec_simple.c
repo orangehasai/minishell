@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "executor.h"
+#include "signals.h"
 
 static void	exec_child_process(t_cmd *cmd, t_shell *shell)
 {
@@ -27,9 +28,24 @@ static int	wait_child_status(pid_t pid)
 		return (1);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 		return (128 + WTERMSIG(status));
+	}
 	return (1);
+}
+
+static int	wait_external_cmd(pid_t pid)
+{
+	int	status;
+
+	setup_signals_parent_wait();
+	status = wait_child_status(pid);
+	if (isatty(STDIN_FILENO))
+		setup_signals_interactive();
+	return (status);
 }
 
 int	exec_simple_cmd(t_cmd *cmd, t_shell *shell)
@@ -51,6 +67,9 @@ int	exec_simple_cmd(t_cmd *cmd, t_shell *shell)
 		return (1);
 	}
 	if (pid == 0)
+	{
+		setup_signals_child();
 		exec_child_process(cmd, shell);
-	return (wait_child_status(pid));
+	}
+	return (wait_external_cmd(pid));
 }

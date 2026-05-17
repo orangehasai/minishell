@@ -1,22 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   test_signal_global.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
+/*   By: skeita <skeita@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/21 16:57:19 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/03/21 16:57:20 by takenakatak      ###   ########.fr       */
+/*   Created: 2026/05/17 14:20:00 by skeita            #+#    #+#             */
+/*   Updated: 2026/05/17 14:20:00 by skeita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
+#include "minishell.h"
 
-# include "minishell.h"
-
-void	setup_signals_interactive(void);
-void	setup_signals_child(void);
-void	setup_signals_parent_wait(void);
-
-#endif
+volatile sig_atomic_t	g_signal = 0;
