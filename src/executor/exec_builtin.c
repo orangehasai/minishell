@@ -17,6 +17,8 @@ static t_builtin_fn	find_builtin_cmd(char *cmd)
 {
 	if (!cmd)
 		return (NULL);
+	if (ft_strncmp(cmd, "echo", 5) == 0)
+		return (builtin_echo);
 	if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (builtin_cd);
 	if (ft_strncmp(cmd, "env", 4) == 0)

@@ -94,3 +94,71 @@ int	report_cd_case(char *name, int actual_status, t_cd_expect *expect,
 	free(actual_cwd);
 	return (report_result(name, success));
 }
+
+int	report_cd_file_case(char *name, char *cmdline, int actual_status,
+		t_cd_expect *expect, char *path, char *expected, char *actual,
+		t_shell *shell)
+{
+	char	*actual_cwd;
+	int		success;
+
+	actual_cwd = getcwd(NULL, 0);
+	success = (actual_status == expect->expected_status && actual_cwd
+			&& strings_equal(actual_cwd, expect->expected_pwd)
+			&& strings_equal(env_get(shell->env, "PWD"), expect->expected_pwd)
+			&& strings_equal(env_get(shell->env, "OLDPWD"), expect->oldpwd)
+			&& strings_equal(expected, actual));
+	printf("CASE: %s\n", name);
+	printf("  cmd: %s\n", cmdline);
+	print_int_field("expected_status", expect->expected_status);
+	print_int_field("actual_status", actual_status);
+	print_text_field("expected_cwd", expect->expected_pwd);
+	print_text_field("actual_cwd", actual_cwd);
+	print_text_field("expected_PWD", expect->expected_pwd);
+	print_text_field("actual_PWD", env_get(shell->env, "PWD"));
+	print_text_field("expected_OLDPWD", expect->oldpwd);
+	print_text_field("actual_OLDPWD", env_get(shell->env, "OLDPWD"));
+	print_text_field("path", path);
+	print_text_field("expected_file", expected);
+	print_text_field("actual_file", actual);
+	free(actual_cwd);
+	return (report_result(name, success));
+}
+
+int	report_file_case(char *name, char *cmdline, int expected_status,
+		int actual_status, char *path, char *expected, char *actual)
+{
+	int	success;
+
+	success = (expected_status == actual_status && strings_equal(expected,
+				actual));
+	printf("CASE: %s\n", name);
+	printf("  cmd: %s\n", cmdline);
+	print_int_field("expected_status", expected_status);
+	print_int_field("actual_status", actual_status);
+	print_text_field("path", path);
+	print_text_field("expected_file", expected);
+	print_text_field("actual_file", actual);
+	return (report_result(name, success));
+}
+
+int	report_dual_file_case(char *name, char *cmdline, int expected_status,
+		int actual_status, char **paths, char **expected, char **actual)
+{
+	int	success;
+
+	success = (expected_status == actual_status);
+	success = success && strings_equal(expected[0], actual[0]);
+	success = success && strings_equal(expected[1], actual[1]);
+	printf("CASE: %s\n", name);
+	printf("  cmd: %s\n", cmdline);
+	print_int_field("expected_status", expected_status);
+	print_int_field("actual_status", actual_status);
+	print_text_field("path1", paths[0]);
+	print_text_field("expected_file1", expected[0]);
+	print_text_field("actual_file1", actual[0]);
+	print_text_field("path2", paths[1]);
+	print_text_field("expected_file2", expected[1]);
+	print_text_field("actual_file2", actual[1]);
+	return (report_result(name, success));
+}
