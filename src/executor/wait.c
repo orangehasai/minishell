@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_pipeline_wait.c                               :+:      :+:    :+:   */
+/*   wait.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takenakatakeshiichirouta <takenakatakes    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/17 01:35:00 by takenakatak       #+#    #+#             */
-/*   Updated: 2026/05/17 01:35:00 by takenakatak      ###   ########.fr       */
+/*   Created: 2026/05/17 15:20:00 by takenakatak       #+#    #+#             */
+/*   Updated: 2026/05/17 15:20:00 by takenakatak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-static int	wait_pipeline_cmd(pid_t pid, pid_t last_pid, int *last_status)
+static int	wait_cmd(pid_t pid, pid_t last_pid, int *last_status)
 {
 	int		status;
 
@@ -30,7 +30,7 @@ static int	wait_pipeline_cmd(pid_t pid, pid_t last_pid, int *last_status)
 	return (0);
 }
 
-int	wait_pipeline(pid_t *pids, int count, pid_t last_pid)
+int	wait_all(pid_t *pids, int count, pid_t last_pid)
 {
 	int	index;
 	int	last_status;
@@ -39,7 +39,7 @@ int	wait_pipeline(pid_t *pids, int count, pid_t last_pid)
 	last_status = 1;
 	while (index < count)
 	{
-		if (wait_pipeline_cmd(pids[index], last_pid, &last_status))
+		if (wait_cmd(pids[index], last_pid, &last_status))
 			return (1);
 		index++;
 	}
@@ -55,5 +55,5 @@ void	cleanup_pipeline_error(int prev_fd, int pipe_fd[2], pid_t *pids,
 		close(pipe_fd[0]);
 	if (pipe_fd[1] != -1)
 		close(pipe_fd[1]);
-	wait_pipeline(pids, count, -1);
+	wait_all(pids, count, -1);
 }

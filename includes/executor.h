@@ -21,8 +21,9 @@ char	*resolve_path(char *cmd, t_shell *shell);
 int		command_status_from_errno(int error_code);
 void	print_resolve_error(char *cmd);
 int		apply_redirections(t_redir *redirs);
+int		execute(t_cmd *cmds, t_shell *shell);
 int		exec_simple_cmd(t_cmd *cmd, t_shell *shell);
-int		wait_pipeline(pid_t *pids, int count, pid_t last_pid);
+int		wait_all(pid_t *pids, int count, pid_t last_pid);
 void	cleanup_pipeline_error(int prev_fd, int pipe_fd[2], pid_t *pids,
 			int count);
 int		exec_pipeline(t_cmd *cmds, t_shell *shell);
