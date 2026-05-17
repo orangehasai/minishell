@@ -45,6 +45,8 @@ EXEC_OBJS	= $(OBJ_DIR)/common/test_output.o \
 			  $(OBJ_DIR)/src/builtins/builtin_echo.o \
 			  $(OBJ_DIR)/src/builtins/builtin_env.o \
 			  $(OBJ_DIR)/src/builtins/builtin_export.o \
+			  $(OBJ_DIR)/src/builtins/builtin_unset.o \
+			  $(OBJ_DIR)/src/builtins/builtin_exit.o \
 			  $(OBJ_DIR)/src/builtins/builtin_pwd.o \
 			  $(OBJ_DIR)/src/builtins/builtin_unset.o \
 			  $(OBJ_DIR)/src/builtins/builtin_utils.o \

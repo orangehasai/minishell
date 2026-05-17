@@ -98,6 +98,8 @@ static void	run_shell(t_shell *shell)
 		add_history(line);
 		process_line(line, shell);
 		free(line);
+		if (shell->should_exit)
+			break ;
 	}
 }
 
@@ -111,6 +113,7 @@ int	main(int argc, char **argv, char **envp)
 	if (env_init(&shell.env, envp))
 		return (1);
 	shell.last_status = 0;
+	shell.should_exit = 0;
 	run_shell(&shell);
 	env_free(shell.env);
 	clear_history();
