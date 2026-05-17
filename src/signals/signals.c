@@ -37,3 +37,15 @@ void	setup_signals_interactive(void)
 	set_signal_handler(SIGINT, handle_sigint_interactive);
 	set_signal_handler(SIGQUIT, SIG_IGN);
 }
+
+void	setup_signals_child(void)
+{
+	set_signal_handler(SIGINT, SIG_DFL);
+	set_signal_handler(SIGQUIT, SIG_DFL);
+}
+
+void	setup_signals_parent_wait(void)
+{
+	set_signal_handler(SIGINT, SIG_IGN);
+	set_signal_handler(SIGQUIT, SIG_IGN);
+}

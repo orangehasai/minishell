@@ -23,7 +23,11 @@ static int	wait_cmd(pid_t pid, pid_t last_pid, int *last_status)
 		if (WIFEXITED(status))
 			*last_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 			*last_status = 128 + WTERMSIG(status);
+		}
 		else
 			*last_status = 1;
 	}
