@@ -89,7 +89,7 @@ int	builtin_exit(char **argv, t_shell *shell)
 	{
 		print_numeric_error(argv[1]);
 		shell->should_exit = 1;
-		return (2);
+		return (255);
 	}
 	if (argv[2])
 	{
