@@ -14,7 +14,9 @@
 
 int	execute(t_cmd *cmds, t_shell *shell)
 {
-	if (!cmds || !shell)
+	if (!cmds)
+		return (0);
+	if (!shell)
 		return (1);
 	if (!cmds->next)
 		return (exec_simple_cmd(cmds, shell));
